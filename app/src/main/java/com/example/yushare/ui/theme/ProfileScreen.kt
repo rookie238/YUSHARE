@@ -100,6 +100,95 @@ fun ProfileScreen() {
                         )
                     }
                 }
+                // Avatar ile Yazılar arasına boşluk
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // --- BİLGİLER KISMI (SOLA YASLI) ---
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 1.dp) // Soldan hizalama boşluğu (Göz kararı)
+                ) {
+                    // 1. İSİM
+                    Text(
+                        text = "Arda Demir",
+                        color = Color(0xFF23006A), // Koyu Mor
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp)) // İsim ile bölüm arası boşluk
+
+                    // 2. BÖLÜM (Department)
+                    // Tek satırda iki farklı renk yapmak için basit yol: Row
+                    Row {
+                        Text(
+                            text = "Department: ",
+                            color = Color(0xFF23006A), // Mor Başlık
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "Visual Communication Design",
+                            color = Color(0xFF5F5C6B), // Gri Yazı
+                            fontSize = 14.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(25.dp)) // Satır arası boşluk
+
+                    // 3. ÖĞRENCİ NO (Student Id)
+                    Row {
+                        Text(
+                            text = "Student Id: ",
+                            color = Color(0xFF23006A), // Mor Başlık
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "20210584978",
+                            color = Color(0xFF5F5C6B), // Gri Yazı
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+                // --- BİLGİLER BİTTİ ---
+                // 1. Aşağıya doğru boşluk bırak (O alttaki gri daireye denk gelsin)
+                Spacer(modifier = Modifier.height(150.dp))
+
+                // 2. NOTES ALANI
+                Column(
+                    modifier = Modifier
+                        .padding(start = 1.dp) // Yukarıdaki yazılarla aynı hizada başlasın
+                ) {
+                    // Başlık
+                    Text(
+                        text = "Notes:",
+                        color = Color(0xFF23006A), // Koyu Mor
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily.SansSerif
+                    )
+
+                    // BURASI ÖNEMLİ:
+                    // Tasarımdaki o "Mavi Kutu" alanı kadar boşluk bırakıyoruz.
+                    // Böylece alt menü geldiğinde yazının üstüne binmeyecek.
+                    Box(
+                        modifier = Modifier
+                            .width(300.dp)  // Figma'daki genişlik
+                            .height(150.dp) // Figma'daki yükseklik
+                        // .border(1.dp, Color.Red) // Kodu test ederken kutuyu görmek istersen bunu aç
+                    ) {
+                        // İstersen buraya silik bir yazı koyabilirsin
+                        Text(
+                            text = "",
+                            color = Color.LightGray,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                }
             }
             // --- BİTİŞ: SADECE AVATAR KISMI ---
 
