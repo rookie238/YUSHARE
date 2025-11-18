@@ -1,4 +1,4 @@
-package com.example.yushare.ui.theme
+package com.example.yushare.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
