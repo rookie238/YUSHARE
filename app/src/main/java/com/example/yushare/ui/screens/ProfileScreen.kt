@@ -102,8 +102,8 @@ fun ProfileScreen() {
                         text = "Arda Demir",
                         color = Color(0xFF23006A),
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = FontFamily.Default
                     )
 
                     Spacer(modifier = Modifier.height(30.dp))
@@ -112,13 +112,16 @@ fun ProfileScreen() {
                         Text(
                             text = "Department: ",
                             color = Color(0xFF23006A),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Default
                         )
                         Text(
                             text = "Visual Communication Design",
-                            color = Color(0xFF5F5C6B),
-                            fontSize = 14.sp
+                            color = Color(0xFF23006A),
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Default
                         )
                     }
 
@@ -128,13 +131,16 @@ fun ProfileScreen() {
                         Text(
                             text = "Student Id: ",
                             color = Color(0xFF23006A),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Default
                         )
                         Text(
                             text = "20210584978",
-                            color = Color(0xFF5F5C6B),
-                            fontSize = 14.sp
+                            color = Color(0xFF23006A),
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Default
                         )
                     }
                 }
