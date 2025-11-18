@@ -17,15 +17,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import com.example.yushare.R
 
 @Composable
 fun ProfileScreen() {
-    // 1. ANA KUTU (Tüm ekranı kaplar)
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // A. ARKA PLAN RESMİ (En altta)
         Image(
             painter = painterResource(id = R.drawable.profil_arkaplan),
             contentDescription = null,
@@ -33,154 +34,129 @@ fun ProfileScreen() {
             modifier = Modifier.fillMaxSize()
         )
 
-        // B. İÇERİK KATMANI (Resmin üstünde)
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 25.dp) // Sağdan soldan boşluk
+                .padding(horizontal = 25.dp)
         ) {
-
-            // Üstten biraz boşluk bırakalım (Status bar için)
             Spacer(modifier = Modifier.height(25.dp))
 
-            // --- HEADER ALANI (Yazı ve Top) ---
             Box(
-                modifier = Modifier.fillMaxWidth() // Enine tam kapla
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // Yazı (Tam Ortada)
                 Text(
                     text = "PROFILE",
-                    color = Color(0xFF23006A), // Figma Moru
+                    color = Color(0xFF23006A),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    fontFamily = FontFamily.SansSerif,
-                    modifier = Modifier.align(Alignment.Center) // Kendi kutusunun ortasında
+                    fontFamily = FontFamily.Default, // Şimdilik sistem fontu (Sonra Baloo 2 yapılacak)
+                    modifier = Modifier.align(Alignment.Center)
                 )
 
-                // Gri Top (En Sağda)
                 Box(
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(36.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFC4C4C4))
-                        .align(Alignment.CenterEnd) // Kendi kutusunun sağında
+                        .background(Color(0xFFC0BFC4))
+                        .align(Alignment.CenterEnd)
                 )
             }
-            // --- HEADER BİTTİ ---
-            // Üstteki Header ile bu kısım arasına biraz boşluk
-            Spacer(modifier = Modifier.height(48.dp)) // Biraz daha aşağı itelim
 
-            // --- BAŞLANGIÇ: SADECE AVATAR KISMI ---
+            Spacer(modifier = Modifier.height(48.dp))
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally // Ortadaki avatarları ortala
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 1. BÜYÜK GRİ YUVARLAK (Arka plan deseniyle uyumlu, Figma'dan tam renk/boyut al!)
                 Box(
                     modifier = Modifier
-                        .size(150.dp) // Figma'dan boyutu al (W/H)
-                        .clip(CircleShape) // Yuvarlak kes
-                        .background(Color(0xFFE0E0E0)), // Açık gri renk (Figma'dan tam kodu al)
-                    contentAlignment = Alignment.Center // İçindeki beyazı ortala
+                        .size(150.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFE0E0E0)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // 2. KÜÇÜK BEYAZ YUVARLAK (Bunun içinde avatar olacak)
                     Box(
                         modifier = Modifier
-                            .size(100.dp) // Figma'dan boyutu al
+                            .size(155.dp)
                             .clip(CircleShape)
-                            .background(Color.White), // Bembeyaz
-                        contentAlignment = Alignment.Center // İçindeki avatarı ortala
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center
                     ) {
-                        // 3. AVATAR RESMİ
                         Image(
-                            painter = painterResource(id = R.drawable.avatar_placeholder), // Senin avatar resmin
+                            painter = painterResource(id = R.drawable.avatar_placeholder),
                             contentDescription = "Profil Avatarı",
-                            contentScale = ContentScale.Crop, // Resmi orantılı sığdır
-                            modifier = Modifier.size(80.dp) // Avatarın boyutu (Figma'dan al)
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(100.dp)
                         )
                     }
                 }
-                // Avatar ile Yazılar arasına boşluk
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // --- BİLGİLER KISMI (SOLA YASLI) ---
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 1.dp) // Soldan hizalama boşluğu (Göz kararı)
+                        .padding(start = 1.dp)
                 ) {
-                    // 1. İSİM
                     Text(
                         text = "Arda Demir",
-                        color = Color(0xFF23006A), // Koyu Mor
+                        color = Color(0xFF23006A),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.SansSerif
                     )
 
-                    Spacer(modifier = Modifier.height(30.dp)) // İsim ile bölüm arası boşluk
+                    Spacer(modifier = Modifier.height(30.dp))
 
-                    // 2. BÖLÜM (Department)
-                    // Tek satırda iki farklı renk yapmak için basit yol: Row
                     Row {
                         Text(
                             text = "Department: ",
-                            color = Color(0xFF23006A), // Mor Başlık
+                            color = Color(0xFF23006A),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
                         Text(
                             text = "Visual Communication Design",
-                            color = Color(0xFF5F5C6B), // Gri Yazı
+                            color = Color(0xFF5F5C6B),
                             fontSize = 14.sp
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(25.dp)) // Satır arası boşluk
+                    Spacer(modifier = Modifier.height(25.dp))
 
-                    // 3. ÖĞRENCİ NO (Student Id)
                     Row {
                         Text(
                             text = "Student Id: ",
-                            color = Color(0xFF23006A), // Mor Başlık
+                            color = Color(0xFF23006A),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
                         Text(
                             text = "20210584978",
-                            color = Color(0xFF5F5C6B), // Gri Yazı
+                            color = Color(0xFF5F5C6B),
                             fontSize = 14.sp
                         )
                     }
                 }
-                // --- BİLGİLER BİTTİ ---
-                // 1. Aşağıya doğru boşluk bırak (O alttaki gri daireye denk gelsin)
+
                 Spacer(modifier = Modifier.height(150.dp))
 
-                // 2. NOTES ALANI
                 Column(
-                    modifier = Modifier
-                        .padding(start = 1.dp) // Yukarıdaki yazılarla aynı hizada başlasın
+                    modifier = Modifier.padding(start = 1.dp)
                 ) {
-                    // Başlık
                     Text(
                         text = "Notes:",
-                        color = Color(0xFF23006A), // Koyu Mor
+                        color = Color(0xFF23006A),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         fontFamily = FontFamily.SansSerif
                     )
 
-                    // BURASI ÖNEMLİ:
-                    // Tasarımdaki o "Mavi Kutu" alanı kadar boşluk bırakıyoruz.
-                    // Böylece alt menü geldiğinde yazının üstüne binmeyecek.
                     Box(
                         modifier = Modifier
-                            .width(300.dp)  // Figma'daki genişlik
-                            .height(150.dp) // Figma'daki yükseklik
-                        // .border(1.dp, Color.Red) // Kodu test ederken kutuyu görmek istersen bunu aç
+                            .width(300.dp)
+                            .height(150.dp)
                     ) {
-                        // İstersen buraya silik bir yazı koyabilirsin
                         Text(
                             text = "",
                             color = Color.LightGray,
@@ -190,9 +166,63 @@ fun ProfileScreen() {
                     }
                 }
             }
-            // --- BİTİŞ: SADECE AVATAR KISMI ---
-
         }
+
+        // --- ALT MENÜ BAŞLANGIÇ ---
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp)
+                .align(Alignment.BottomCenter)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.bottom_bar_bg),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxSize()
+                    .padding(top = 10.dp),
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_home),
+                    contentDescription = "Home",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    contentDescription = "Edit",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_add),
+                    contentDescription = "Add",
+                    tint = Color.White,
+                    modifier = Modifier.size(48.dp)
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_groups),
+                    contentDescription = "Group",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_profile_custom),
+                    contentDescription = "Profile",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+        // --- ALT MENÜ BİTİŞ ---
     }
 }
 
