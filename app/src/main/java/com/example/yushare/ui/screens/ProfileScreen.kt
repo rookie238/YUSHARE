@@ -18,9 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import com.example.yushare.R
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun ProfileScreen() {
@@ -145,31 +148,47 @@ fun ProfileScreen() {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(150.dp))
+                Spacer(modifier = Modifier.height(120.dp))
 
                 Column(
-                    modifier = Modifier.padding(start = 1.dp)
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 30.dp)
                 ) {
                     Text(
                         text = "Notes:",
                         color = Color(0xFF23006A),
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
-                        fontFamily = FontFamily.SansSerif
+                        fontFamily = FontFamily.Default
                     )
+                    Spacer(modifier = Modifier.height(1.dp))
 
-                    Box(
+                    // 2. YAZILABİLİR BEYAZ KUTU
+                    // Buraya yazı yazılabilecek. Şimdilik içi boş.
+                    var notesText by remember { mutableStateOf("") } // Yazılan yazıyı tutan değişken
+
+                    androidx.compose.material3.TextField(
+                        value = notesText,
+                        onValueChange = { notesText = it }, // Yazdıkça güncelle
+                        placeholder = {
+                            Text("", color = Color.Gray)
+                        },
                         modifier = Modifier
-                            .width(300.dp)
-                            .height(150.dp)
-                    ) {
-                        Text(
-                            text = "",
-                            color = Color.LightGray,
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(top = 8.dp)
+                            .fillMaxWidth()
+                            .height(150.dp), // Kutunun yüksekliği (Figma'ya göre ayarla)
+
+                        // --- TASARIM SİHRİ BURADA ---
+                        shape = RoundedCornerShape(20.dp), // Kenarları Yuvarlat
+                        colors = androidx.compose.material3.TextFieldDefaults.colors(
+                            // Arka planı Yarı Saydam Beyaz yapıyoruz (Figma'daki gibi)
+                            focusedContainerColor = Color.White.copy(alpha = 0.6f),
+                            unfocusedContainerColor = Color.White.copy(alpha = 0.6f),
+                            disabledContainerColor = Color.White.copy(alpha = 0.6f),
+                            // Alt çizgileri siliyoruz (Temiz görünüm için)
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
                         )
-                    }
+                    )
                 }
             }
         }
@@ -205,7 +224,7 @@ fun ProfileScreen() {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_edit),
                     contentDescription = "Edit",
-                    tint = Color.White,
+                    tint = Color.Unspecified,
                     modifier = Modifier.size(30.dp)
                 )
                 Icon(
