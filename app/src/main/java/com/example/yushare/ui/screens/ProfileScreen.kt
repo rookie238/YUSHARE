@@ -2,10 +2,18 @@ package com.example.yushare.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,19 +25,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.Icon
 import com.example.yushare.R
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun ProfileScreen() {
+    var showMenu by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        // Arka plan
         Image(
             painter = painterResource(id = R.drawable.profil_arkaplan),
             contentDescription = null,
@@ -37,6 +42,7 @@ fun ProfileScreen() {
             modifier = Modifier.fillMaxSize()
         )
 
+        // Ana içerik
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -44,6 +50,7 @@ fun ProfileScreen() {
         ) {
             Spacer(modifier = Modifier.height(25.dp))
 
+            // Üst başlık + menü butonu
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -52,7 +59,7 @@ fun ProfileScreen() {
                     color = Color(0xFF23006A),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    fontFamily = FontFamily.Default, // Şimdilik sistem fontu (Sonra Baloo 2 yapılacak)
+                    fontFamily = FontFamily.Default,
                     modifier = Modifier.align(Alignment.Center)
                 )
 
@@ -62,15 +69,26 @@ fun ProfileScreen() {
                         .clip(CircleShape)
                         .background(Color(0xFFC0BFC4))
                         .align(Alignment.CenterEnd)
-                )
+                        .clickable { showMenu = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.Menu,
+                        contentDescription = "Menu",
+                        tint = Color(0xFF23006A),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(48.dp))
 
+            // Profil avatar + bilgiler
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Avatar
                 Box(
                     modifier = Modifier
                         .size(150.dp)
@@ -80,7 +98,7 @@ fun ProfileScreen() {
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(155.dp)
+                            .size(120.dp) // 155 çok büyüktü, istersen tekrar 155 yapabilirsin
                             .clip(CircleShape)
                             .background(Color.White),
                         contentAlignment = Alignment.Center
@@ -96,6 +114,7 @@ fun ProfileScreen() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // İsim + Department + Student Id
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -150,8 +169,10 @@ fun ProfileScreen() {
 
                 Spacer(modifier = Modifier.height(120.dp))
 
+                // Notes alanı
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 30.dp)
                 ) {
                     Text(
@@ -161,30 +182,25 @@ fun ProfileScreen() {
                         fontSize = 16.sp,
                         fontFamily = FontFamily.Default
                     )
-                    Spacer(modifier = Modifier.height(1.dp))
 
-                    // 2. YAZILABİLİR BEYAZ KUTU
-                    // Buraya yazı yazılabilecek. Şimdilik içi boş.
-                    var notesText by remember { mutableStateOf("") } // Yazılan yazıyı tutan değişken
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    var notesText by remember { mutableStateOf("") }
 
                     androidx.compose.material3.TextField(
                         value = notesText,
-                        onValueChange = { notesText = it }, // Yazdıkça güncelle
+                        onValueChange = { notesText = it },
                         placeholder = {
                             Text("", color = Color.Gray)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp), // Kutunun yüksekliği (Figma'ya göre ayarla)
-
-                        // --- TASARIM SİHRİ BURADA ---
-                        shape = RoundedCornerShape(20.dp), // Kenarları Yuvarlat
+                            .height(150.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = androidx.compose.material3.TextFieldDefaults.colors(
-                            // Arka planı Yarı Saydam Beyaz yapıyoruz (Figma'daki gibi)
                             focusedContainerColor = Color.White.copy(alpha = 0.6f),
                             unfocusedContainerColor = Color.White.copy(alpha = 0.6f),
                             disabledContainerColor = Color.White.copy(alpha = 0.6f),
-                            // Alt çizgileri siliyoruz (Temiz görünüm için)
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                         )
@@ -204,8 +220,9 @@ fun ProfileScreen() {
                 painter = painterResource(id = R.drawable.bottom_bar_bg),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxSize()
-                    .padding(top = 10.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 10.dp)
             )
 
             Row(
@@ -248,6 +265,14 @@ fun ProfileScreen() {
             }
         }
         // --- ALT MENÜ BİTİŞ ---
+    }
+
+    // Menü true ise ayarlar dialog’u göster
+    if (showMenu) {
+        SettingsDialog(
+            onDismiss = { showMenu = false },
+
+        )
     }
 }
 
