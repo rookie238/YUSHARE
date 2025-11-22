@@ -4,11 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +33,7 @@ import com.example.yushare.R
 @Composable
 fun ProfileScreen() {
     var showMenu by remember { mutableStateOf(false) }
+    var showEditProfile by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -73,7 +77,7 @@ fun ProfileScreen() {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Menu,
+                        imageVector = Icons.Default.Menu,
                         contentDescription = "Menu",
                         tint = Color(0xFF23006A),
                         modifier = Modifier.size(20.dp)
@@ -98,7 +102,7 @@ fun ProfileScreen() {
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(120.dp) // 155 çok büyüktü, istersen tekrar 155 yapabilirsin
+                            .size(120.dp)
                             .clip(CircleShape)
                             .background(Color.White),
                         contentAlignment = Alignment.Center
@@ -265,13 +269,23 @@ fun ProfileScreen() {
             }
         }
         // --- ALT MENÜ BİTİŞ ---
-    }
+    } // end Box
 
-    // Menü true ise ayarlar dialog’u göster
+    // 1. AYARLAR PENCERESİ
     if (showMenu) {
         SettingsDialog(
             onDismiss = { showMenu = false },
+            onEditProfileClick = {
+                showMenu = false       // Ayarlar menüsünü kapat
+                showEditProfile = true // Edit Profile penceresini aç
+            }
+        )
+    }
 
+    // 2. EDIT PROFILE PENCERESİ (Arkası flu kalacak!)
+    if (showEditProfile) {
+        EditProfileDialog(
+            onDismiss = { showEditProfile = false } // Geri basınca kapat
         )
     }
 }

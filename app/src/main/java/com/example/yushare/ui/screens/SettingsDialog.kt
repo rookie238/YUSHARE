@@ -1,11 +1,12 @@
 package com.example.yushare.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -13,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,29 +25,31 @@ import com.example.yushare.R
 
 @Composable
 fun SettingsDialog(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onEditProfileClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Dialog(onDismissRequest = { onDismiss() }) {
-        // 1. KUTU TASARIMI
         Card(
             shape = RoundedCornerShape(30.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF6C7B8E)
             ),
             modifier = Modifier
-                .fillMaxWidth(0.95f) // İNCE AYAR 1: Kutuyu genişlettik (Daha havalı)
+                .fillMaxWidth(0.95f)
                 .heightIn(min = 500.dp, max = 650.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp) // İçeriden boşluk
+                    .padding(24.dp)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // --- ÜST KISIM ---
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(bottom = 1.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -54,9 +57,9 @@ fun SettingsDialog(
                     Text(
                         text = "SETTINGS",
                         color = Color.White,
-                        fontSize = 16.sp, // Başlığı tık küçülttük, kibar olsun
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = 1.sp
+                        letterSpacing = 1.sp
                     )
 
                     IconButton(onClick = { onDismiss() }) {
@@ -71,7 +74,6 @@ fun SettingsDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // --- LİSTE ELEMANLARI ---
                 val menuItems = listOf(
                     "Edit Profile",
                     "Notification Prefrences",
@@ -84,7 +86,6 @@ fun SettingsDialog(
 
                 menuItems.forEach { item ->
                     Column {
-                        // MENÜ YAZISI
                         Text(
                             text = item,
                             color = Color.White,
@@ -92,18 +93,23 @@ fun SettingsDialog(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { /* Tıklama */ }
-                                .padding(vertical = 16.dp) // İNCE AYAR 3: Yazıların arasını açtık (Nefes alsın)
+                                .clickable {
+                                    if (item == "Edit Profile") {
+                                        onEditProfileClick()
+                                        onDismiss()
+                                    } else {
+                                        Toast.makeText(context, "$item seçildi", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                .padding(vertical = 16.dp)
                         )
 
-                        // ÇİZGİ (Divider) - Log Out hariç
                         if (item != "Log Out") {
-                            // İNCE AYAR 4: Kendi ince çizgimizi çizdik
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(1.dp) // 1 piksel kalınlık
-                                    .background(Color.White.copy(alpha = 0.2f)) // %80 Şeffaf (Silik çizgi)
+                                    .height(1.dp)
+                                    .background(Color.White.copy(alpha = 0.2f))
                             )
                         }
                     }
@@ -112,6 +118,7 @@ fun SettingsDialog(
         }
     }
 }
+
 @Composable
 fun HorizontalDivider(
     modifier: Modifier = Modifier,
@@ -126,10 +133,11 @@ fun HorizontalDivider(
     )
 }
 
-// Şeffaflık ayarı için extension (Alpha)
-fun Modifier.alpha(alpha: Float) = this.then(Modifier.graphicsLayer(alpha = alpha))
 @Preview(showBackground = true)
 @Composable
 fun SettingsDialogPreview() {
-    SettingsDialog(onDismiss = {})
-    }
+    SettingsDialog(
+        onDismiss = {},
+        onEditProfileClick = {}
+    )
+}
