@@ -1,5 +1,6 @@
 package com.example.yushare.ui.screens
 
+import EditProfileDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -191,7 +194,7 @@ fun ProfileScreen() {
 
                     var notesText by remember { mutableStateOf("") }
 
-                    androidx.compose.material3.TextField(
+                    TextField(
                         value = notesText,
                         onValueChange = { notesText = it },
                         placeholder = {
@@ -201,7 +204,7 @@ fun ProfileScreen() {
                             .fillMaxWidth()
                             .height(150.dp),
                         shape = RoundedCornerShape(20.dp),
-                        colors = androidx.compose.material3.TextFieldDefaults.colors(
+                        colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.White.copy(alpha = 0.6f),
                             unfocusedContainerColor = Color.White.copy(alpha = 0.6f),
                             disabledContainerColor = Color.White.copy(alpha = 0.6f),
@@ -285,7 +288,8 @@ fun ProfileScreen() {
     // 2. EDIT PROFILE PENCERESİ (Arkası flu kalacak!)
     if (showEditProfile) {
         EditProfileDialog(
-            onDismiss = { showEditProfile = false } // Geri basınca kapat
+            onDismiss = { showEditProfile = false },
+            currentBio = TODO() // Geri basınca kapat
         )
     }
 }

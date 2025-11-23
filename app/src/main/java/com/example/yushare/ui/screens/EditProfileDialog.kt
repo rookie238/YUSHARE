@@ -1,8 +1,4 @@
-package com.example.yushare.ui.screens
 import androidx.compose.foundation.Image
-
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,8 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
-// R dosyasını import etmeyi unutma (com.example.projeadi.R)
-
 @Composable
 fun EditProfileDialog(
     onDismiss: () -> Unit,
@@ -38,19 +32,20 @@ fun EditProfileDialog(
 ) {
     var bioText by remember { mutableStateOf(currentBio) }
 
-    // --- 🎨 FİGMA RENK PALETİ (REVİZE EDİLDİ) ---
-    // Arka plan: Daha mat, koyu gri (Slate Grey)
-    val dialogBackgroundColor = Color(0xFF35414C).copy(alpha = 0.72f)
-    val dialogCornerRadius = 29.dp
+    // --- 1. DIŞ KUTU (DIALOG) AYARLARI ---
+    val dialogColor = Color(0xFF35414C).copy(alpha = 0.72f) // %72 Opaklık
+    val dialogWidth = 284.dp
+    val dialogHeight = 408.dp
+    val dialogRadius = 29.dp
 
-    // Bio Kutusu: Daha açık, gümüş gri
-    val bioBoxColor = Color(0xFFD9D9D9)
+    // --- 2. İÇ KUTU (BIO) AYARLARI ---
+    val bioBoxColor = Color(0xFFECEBED).copy(alpha = 0.66f) // %66 Opaklık
+    val bioBoxWidth = 187.dp
+    val bioBoxHeight = 170.dp
+    val bioBoxRadius = 25.dp
 
-    // Bio Yazısı: Koyu antrasit
-    val bioTextColor = Color(0xFF2D3436)
-
-    // Artı (+) İkonu: Figma'daki gibi koyu mor/indigo
-    val plusIconColor = Color(0xFF4527A0)
+    // --- 3. DİĞER RENKLER ---
+    val plusIconColor = Color(0xFF311B92) // Koyu Mor (Tahmini, sonra sabitleriz)
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -59,23 +54,24 @@ fun EditProfileDialog(
             decorFitsSystemWindows = false
         )
     ) {
+        // --- ANA DIALOG KUTUSU ---
         Box(
             modifier = Modifier
-                .width(284.dp)
-                .height(408.dp)
-                .clip(RoundedCornerShape(dialogCornerRadius))// Figma'daki yumuşak köşe
-                .background(dialogBackgroundColor)
+                .width(dialogWidth)   // Figma: 284
+                .height(dialogHeight) // Figma: 408
+                .clip(RoundedCornerShape(dialogRadius)) // Figma: 29
+                .background(dialogColor)
         ) {
             Column(
-                modifier = Modifier
-                    .padding(24.dp), // İçeriden boşluk
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // 1. Close (X) Butonu
-                // Row kullanarak sağa yasladık, Box'a göre daha kontrollü
+                // Kapatma (X) Butonu - Sağ üst
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, end = 16.dp), // Kenar boşlukları
                     horizontalArrangement = Arrangement.End
                 ) {
                     Icon(
@@ -83,114 +79,96 @@ fun EditProfileDialog(
                         contentDescription = "Close",
                         tint = Color.White,
                         modifier = Modifier
-                            .size(20.dp) // İkon boyutu küçültüldü (Daha zarif)
+                            .size(20.dp)
                             .clickable { onDismiss() }
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        contentDescription = "Profile Picture",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray)
+                    )
+                }
 
-                // 2. Profil Resmi (Avatar)
-                Image(
-                    // Buraya kendi resim kaynağını koy: painterResource(id = R.drawable.my_avatar)
-                    painter = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    contentDescription = "Profile",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(80.dp) // Boyut Figma'ya göre biraz küçültüldü (daha orantılı)
-                        .clip(CircleShape)
-                        .background(Color.Gray)
-                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(12.dp))
 
-                // 3. Yazı ve Artı İkonu
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable { /* Resim Değiş */ }
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable {}
                 ) {
                     Text(
                         text = "Change Profile Picture",
-                        style = TextStyle(
-                            fontSize = 12.sp, // Font boyutu küçüldü (Figma ile eşleşti)
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif, // Baloo 2 ekleyince burayı değiştiririz
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
+                        color = Color.White
                         )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add",
-                        tint = plusIconColor, // Koyu Mor
-                        modifier = Modifier.size(20.dp) // İkon küçüldü
+                        tint = Color(0xFF311B92),
+                        modifier = Modifier.size(22.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // 4. Bio Bölümü
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
+                // Bio Başlığı
+                Text(
+                    text = "Bio",
+                    style = TextStyle(color = Color.White, fontSize = 14.sp),
+                    modifier = Modifier
+                        .width(bioBoxWidth) // Başlık kutuyla aynı hizada başlasın
+                        .padding(bottom = 4.dp)
+                )
+
+                // --- İÇ KUTU (BIO ALANI) ---
+                Box(
+                    modifier = Modifier
+                        .width(bioBoxWidth)   // Figma: 187
+                        .height(bioBoxHeight) // Figma: 170
+                        .clip(RoundedCornerShape(bioBoxRadius)) // Figma: 25
+                        .background(bioBoxColor)
+                        .padding(16.dp)
                 ) {
-                    Text(
-                        text = "Bio",
-                        style = TextStyle(
+                    BasicTextField(
+                        value = bioText,
+                        onValueChange = { bioText = it },
+                        textStyle = TextStyle(
+                            color = Color.White, // Görsele göre beyaz duruyor
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White
+                            fontWeight = FontWeight.Bold
                         ),
-                        modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+                        modifier = Modifier.fillMaxSize()
                     )
 
-                    // Bio Kutusu (Tamamen Custom)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp) // Yükseklik ayarlandı
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(bioBoxColor) // Açık Gri Arkaplan
-                            .padding(16.dp) // Yazının içeriden boşluğu
-                    ) {
-                        BasicTextField(
-                            value = bioText,
-                            onValueChange = { bioText = it },
-                            textStyle = TextStyle(
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold, // "FEIN FEIN" kalınlığı
-                                color = bioTextColor
-                            ),
-                            cursorBrush = SolidColor(plusIconColor),
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                        // Eğer yazı boşsa "Placeholder" göstermek istersen:
-                        if (bioText.isEmpty()) {
-                            Text("Enter your bio...", color = Color.Gray, fontSize = 14.sp)
-                        }
+                    if (bioText.isEmpty()) {
+                        Text("Bio giriniz...", color = Color.White.copy(alpha = 0.5f), fontSize = 14.sp)
                     }
                 }
-
-                // Alt tarafta biraz boşluk bırakalım ki kutu dibe yapışmasın
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
 }
 
-// --- Preview Kısmı ---
 @Preview(showBackground = true)
 @Composable
-fun EditProfilePixelPerfectPreview() {
+fun EditProfileFigmaTest() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF263238).copy(alpha = 0.8f)), // Arkadaki koyu flu his
+            .background(Color.Black.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
-        EditProfileDialog(
-            onDismiss = {},
-            currentBio = "FEIN FEIN FEIN"
-        )
+        EditProfileDialog(onDismiss = {}, currentBio = "FEIN FEIN FEIN")
     }
 }
