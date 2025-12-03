@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -95,7 +96,24 @@ fun EditProfileDialog(
                             .size(80.dp)
                             .clip(CircleShape)
                             .background(Color.Gray)
+                            .clickable { /* Resim Değiş */ }
                     )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter) // Resmin tam alt ortası
+                            .offset(y = 10.dp) // Hafif aşağı sarkıtıyoruz (Badge gibi)
+                            .size(26.dp)       // Turkuaz dairenin boyutu
+                            .clip(CircleShape)
+                            .background(Color(0xFF01C8B3)) // FIGMA: Turkuaz Arka Plan
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Edit",
+                            tint = Color(0xFF23006A), // FIGMA: Koyu Mor İkon
+                            modifier = Modifier.size(18.dp) // İkon boyutu
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -109,15 +127,11 @@ fun EditProfileDialog(
                         fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif, // Baloo 2 ekleyince burayı değiştiririz
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp,
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier.clickable { /* Resim Değiş */ }
                         )
                     Spacer(modifier = Modifier.height(2.dp))
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add",
-                        tint = Color(0xFF311B92),
-                        modifier = Modifier.size(22.dp)
-                    )
+
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -144,9 +158,10 @@ fun EditProfileDialog(
                         value = bioText,
                         onValueChange = { bioText = it },
                         textStyle = TextStyle(
-                            color = Color.White, // Görsele göre beyaz duruyor
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            color = Color(0xFFFEFEFE), // Görsele göre beyaz duruyor
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium, // Figma Kalınlığı
+                            fontFamily = FontFamily.SansSerif
                         ),
                         modifier = Modifier.fillMaxSize()
                     )
