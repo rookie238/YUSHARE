@@ -3,19 +3,16 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
-
 }
 
 android {
     namespace = "com.example.yushare"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 34 // "release(36)" yerine standart 34 veya 35 kullanmak daha güvenlidir, ama hata verirse 34 yap.
 
     defaultConfig {
         applicationId = "com.example.yushare"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -41,10 +38,10 @@ android {
     buildFeatures {
         compose = true
     }
-
 }
 
 dependencies {
+    // --- STANDART ANDROID & COMPOSE KÜTÜPHANELERİ ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -53,7 +50,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.ui)
+
+    // --- TESTLER ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,26 +60,29 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    // --- FIREBASE (BOM YÖNETİMİ) ---
+    // BOM sayesinde versiyon numarası yazmamıza gerek kalmaz
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
 
-// Firebase Auth
+    // Auth (Giriş işlemleri)
     implementation("com.google.firebase:firebase-auth")
 
-// Firestore
+    // Firestore (Veritabanı)
     implementation("com.google.firebase:firebase-firestore")
 
-    // Jetpack Compose Navigation
-    implementation ("androidx.navigation:navigation-compose:2.7.3")
+    // Storage (Resim Yükleme) - HATA VEREN ESKİ SATIR SİLİNDİ, DOĞRUSU BU:
+    implementation("com.google.firebase:firebase-storage")
 
-    // Material3 (sen zaten kullanıyorsun)
-    implementation ("androidx.compose.material3:material3:1.2.0")
+    // --- DİĞER KÜTÜPHANELER ---
+    // Navigasyon
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
-    // Diğer Compose bağımlılıkları (Compose UI, Tooling vs.)
-    implementation ("androidx.compose.ui:ui:1.5.0")
-    implementation ("androidx.compose.ui:ui-tooling-preview:1.5.0")
-    debugImplementation ("androidx.compose.ui:ui-tooling:1.5.0")
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
+    // Coil (Resim Gösterme)
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
-
+    // BU SATIRI EKLE (Genişletilmiş İkon Paketi):
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
 }
