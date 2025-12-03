@@ -1,4 +1,4 @@
-package com.example.yushare.Screens
+package com.example.yushare.screens
 
 
 import androidx.compose.foundation.layout.Box

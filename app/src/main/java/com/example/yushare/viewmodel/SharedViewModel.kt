@@ -2,20 +2,22 @@ package com.example.yushare.viewmodel
 
 import android.content.Context
 import android.net.Uri
-import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.example.yushare.model.Course
 import com.example.yushare.model.Post
-import com.google.firebase.auth.FirebaseAuth // AUTH KÜTÜPHANESİ EKLENDİ
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
 class SharedViewModel : ViewModel() {
 
+    // --- LİSTELERİMİZ ---
     var coursesList = mutableStateListOf<Course>()
         private set
     var postsList = mutableStateListOf<Post>()
@@ -23,8 +25,10 @@ class SharedViewModel : ViewModel() {
     var selectedCoursePosts = mutableStateListOf<Post>()
         private set
 
+    // Yükleme yapılıyor mu? (Dönme efekti için)
     var isUploading = mutableStateOf(false)
 
+    // Uygulama açılınca dersleri ve gönderileri çek
     init {
         try {
             fetchCourses()
@@ -32,6 +36,7 @@ class SharedViewModel : ViewModel() {
         } catch (e: Exception) { }
     }
 
+    // --- ESKİ FONKSİYONLAR (AYNEN KALDI) ---
     private fun fetchCourses() {
         val db = FirebaseFirestore.getInstance()
         db.collection("courses").get().addOnSuccessListener { result ->
@@ -74,6 +79,7 @@ class SharedViewModel : ViewModel() {
             }
     }
 
+    // Veritabanından gelen veriyi Post modeline çevirir
     private fun mapDocumentToPost(document: com.google.firebase.firestore.DocumentSnapshot): Post {
         val url = document.getString("imageUrl") ?: document.getString("fileUrl") ?: ""
         return Post(
@@ -86,6 +92,7 @@ class SharedViewModel : ViewModel() {
         )
     }
 
+    // Dosyanın türünü (Resim mi, PDF mi?) anlar
     private fun getFileType(context: Context, uri: Uri): String {
         val mimeType = context.contentResolver.getType(uri) ?: return "file"
         return when {
@@ -97,30 +104,26 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    // --- İŞTE SENİN SORDUĞUN FONKSİYON BURAYA GELDİ ---
+    // Giriş yapan kullanıcının adını bulur
     private fun getCurrentUsername(): String {
         val user = FirebaseAuth.getInstance().currentUser
         return when {
             user == null -> "@misafir"
-            !user.displayName.isNullOrEmpty() -> user.displayName!! // İsim varsa (Google girişlerinde olur)
-            !user.email.isNullOrEmpty() -> "@${user.email!!.substringBefore("@")}" // Yoksa mailin başını al
+            !user.displayName.isNullOrEmpty() -> user.displayName!!
+            !user.email.isNullOrEmpty() -> "@${user.email!!.substringBefore("@")}"
             else -> "@kullanici"
         }
     }
 
-    // --- UPLOAD FONKSİYONU GÜNCELLENDİ ---
+    // --- YENİ BÖLÜM: YÜKLEME İŞLEMİ (Cloudinary) ---
     fun uploadPost(fileUri: Uri?, courseCode: String, description: String, context: Context, onSuccess: () -> Unit) {
         isUploading.value = true
-
-        // Kullanıcı adını alıyoruz
         val currentUsername = getCurrentUsername()
 
-        val db = FirebaseFirestore.getInstance()
-
-        // 1. Dosya Yoksa (Sadece Yazı)
+        // DURUM 1: Sadece Yazı Var, Dosya Yok
         if (fileUri == null) {
             val postMap = hashMapOf<String, Any>(
-                "username" to currentUsername, // ARTIK OTOMATİK
+                "username" to currentUsername,
                 "courseCode" to courseCode,
                 "fileUrl" to "",
                 "fileType" to "text",
@@ -131,31 +134,43 @@ class SharedViewModel : ViewModel() {
             return
         }
 
-        // 2. Dosya Varsa
+        // DURUM 2: Dosya Var -> Cloudinary'ye Yolla
         val fileType = getFileType(context, fileUri)
-        val storageRef = FirebaseStorage.getInstance().reference
-        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(context.contentResolver.getType(fileUri)) ?: "file"
-        val fileName = "uploads/${UUID.randomUUID()}.$extension"
-        val fileRef = storageRef.child(fileName)
 
-        fileRef.putFile(fileUri).addOnSuccessListener {
-            fileRef.downloadUrl.addOnSuccessListener { uri ->
-                val postMap = hashMapOf<String, Any>(
-                    "username" to currentUsername, // ARTIK OTOMATİK
-                    "courseCode" to courseCode,
-                    "fileUrl" to uri.toString(),
-                    "fileType" to fileType,
-                    "description" to description,
-                    "timestamp" to System.currentTimeMillis()
-                )
-                saveToFirestore(postMap, context, onSuccess)
-            }
-        }.addOnFailureListener {
-            isUploading.value = false
-            Toast.makeText(context, "Yükleme Hatası: ${it.message}", Toast.LENGTH_LONG).show()
-        }
+        MediaManager.get().upload(fileUri)
+            .unsigned("ml_default") // <--- BURASI ÇOK ÖNEMLİ (Aşağıda anlatacağım)
+            .option("resource_type", "auto")
+            .callback(object : UploadCallback {
+                override fun onStart(requestId: String?) {}
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
+
+                override fun onSuccess(requestId: String?, resultData: Map<*, *>?) {
+                    // Cloudinary yükledi ve bize linki verdi
+                    val downloadUrl = resultData?.get("secure_url").toString()
+
+                    // Şimdi bu linki Firebase'e kaydediyoruz
+                    val postMap = hashMapOf<String, Any>(
+                        "username" to currentUsername,
+                        "courseCode" to courseCode,
+                        "fileUrl" to downloadUrl,
+                        "fileType" to fileType,
+                        "description" to description,
+                        "timestamp" to System.currentTimeMillis()
+                    )
+                    saveToFirestore(postMap, context, onSuccess)
+                }
+
+                override fun onError(requestId: String?, error: ErrorInfo?) {
+                    isUploading.value = false
+                    Toast.makeText(context, "Hata: ${error?.description}", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+            })
+            .dispatch()
     }
 
+    // Veritabanına kaydetme yardımcısı
     private fun saveToFirestore(data: HashMap<String, Any>, context: Context, onSuccess: () -> Unit) {
         FirebaseFirestore.getInstance().collection("uploads").add(data).addOnSuccessListener {
             isUploading.value = false
@@ -164,7 +179,7 @@ class SharedViewModel : ViewModel() {
             onSuccess()
         }.addOnFailureListener {
             isUploading.value = false
-            Toast.makeText(context, "Veritabanı Hatası: ${it.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Hata: ${it.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }

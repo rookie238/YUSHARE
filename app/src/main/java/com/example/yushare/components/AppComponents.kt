@@ -77,17 +77,35 @@ fun PostItem(post: Post) {
             .background(Color(0xFFF5F5F7), RoundedCornerShape(16.dp))
             .padding(bottom = 12.dp)
     ) {
-        // Üst Bilgi
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = post.username, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-            Text(text = post.courseCode, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color(0xFF2B0B5E))
+        // --- ÜST BİLGİ ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // 1. Kullanıcı Adı
+            // ViewModel zaten "@melisakosun" şeklinde kaydettiği için buraya tekrar @ koymuyoruz.
+            Text(
+                text = post.username,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+
+            // 2. Ders Adı
+            // Post modelinde "courseCode" string olarak tutulduğu için doğrudan onu yazdırıyoruz.
+            Text(
+                text = post.courseCode,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = Color(0xFF2B0B5E)
+            )
         }
 
         // --- İÇERİK KISMI ---
         // 1. Eğer Resimse
         if (post.fileType == "image" && post.fileUrl.isNotEmpty()) {
             AsyncImage(
-                // BURAYI DÜZELTTİK: imageUrl -> fileUrl
                 model = post.fileUrl,
                 contentDescription = "Upload",
                 placeholder = painterResource(R.drawable.ic_launcher_foreground),
@@ -111,15 +129,16 @@ fun PostItem(post: Post) {
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val icon = when(post.fileType) {
-                    "pdf" -> Icons.Default.Description
-                    "audio" -> Icons.Default.Audiotrack
+                val icon = when {
+                    post.fileType == "pdf" -> Icons.Default.Description
+                    post.fileType == "audio" -> Icons.Default.Audiotrack
                     else -> Icons.Default.InsertDriveFile
                 }
+
                 Icon(icon, null, tint = Color(0xFF2B0B5E), modifier = Modifier.size(40.dp))
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text("Ekli Dosya", fontWeight = FontWeight.Bold)
+                    Text("Attached File", fontWeight = FontWeight.Bold)
                     Text(post.fileType.uppercase(), fontSize = 12.sp, color = Color.Gray)
                 }
             }

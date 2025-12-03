@@ -1,4 +1,4 @@
-package com.example.yushare.Screens
+package com.example.yushare.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image

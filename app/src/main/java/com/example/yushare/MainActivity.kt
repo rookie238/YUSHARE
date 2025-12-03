@@ -9,21 +9,39 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.yushare.navigation.HomeWithNavBar
-import com.example.yushare.Screens.LoginScreen // LoginScreen'in paketine göre değişebilir
+import com.example.yushare.screens.LoginScreen
 import com.example.yushare.ui.theme.YUSHARETheme
 import com.google.firebase.auth.FirebaseAuth
+// --- 1. IMPORT (Cloudinary) ---
+import com.cloudinary.android.MediaManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // --- 2. CLOUDINARY BAŞLATMA (BİLGİLERİN GİRİLDİ) ---
+        try {
+            val config = HashMap<String, String>()
+
+            // Senin Cloud Name'in:
+            config["cloud_name"] = "dqftx42nh"
+
+            // Senin API Key'in:
+            config["api_key"] = "228968633971553"
+
+            MediaManager.init(this, config)
+        } catch (e: Exception) {
+            // Uygulama tekrar açıldığında çökmemesi için boş geçiyoruz.
+        }
+        // -------------------------------------------------
+
         enableEdgeToEdge()
         val auth = FirebaseAuth.getInstance()
 
-        // --- GEÇİCİ KOD BAŞLANGICI ---
-        // Bu satır her uygulama açıldığında oturumu kapatır.
-        // Böylece hep Login ekranı gelir. Testin bitince bu satırı sil.
-        auth.signOut()
-        // --- GEÇİCİ KOD BİTİŞİ ---
+        // --- GEÇİCİ KOD (HER AÇILIŞTA GİRİŞ EKRANI GELİR) ---
+        // Uygulamayı tamamladığında bu satırı silmeyi unutma!
+        //auth.signOut()
+        // -----------------------------------------------------
 
         val currentUser = auth.currentUser
 

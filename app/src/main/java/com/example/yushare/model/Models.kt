@@ -6,11 +6,14 @@ data class Course(
     val subtitle: String = ""
 )
 
+// BURASI ÖNEMLİ:
+// SharedViewModel içinde "courseCode" string olarak kullanıldığı için
+// burada da String olmalı. (Course nesnesi OLMAMALI)
 data class Post(
     val id: String = "",
     val username: String = "",
-    val courseCode: String = "",
-    val fileUrl: String = "",    // Artık sadece resim değil, herhangi bir dosya olabilir
-    val description: String = "", // Yorum alanı
-    val fileType: String = "text" // "image", "pdf", "audio", "text" olabilir
+    val courseCode: String = "", // <-- BURASI String OLMALI
+    val fileUrl: String = "",
+    val description: String = "",
+    val fileType: String = "text"
 )

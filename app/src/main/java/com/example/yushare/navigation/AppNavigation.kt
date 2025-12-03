@@ -20,10 +20,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.yushare.Screens.CourseDetailScreen
-import com.example.yushare.Screens.PlaceholderScreen
-import com.example.yushare.Screens.UploadScreen
-import com.example.yushare.Screens.HomeScreen
+
+// --- DÜZELTİLEN IMPORTLAR ---
+// Hepsi "com.example.yushare.screens" (küçük harf) olmalı
+import com.example.yushare.screens.HomeScreen
+import com.example.yushare.screens.UploadScreen // <--- HATAYI ÇÖZEN SATIR BU
+import com.example.yushare.screens.CourseDetailScreen
+import com.example.yushare.screens.PlaceholderScreen
 import com.example.yushare.viewmodel.SharedViewModel
 
 @Composable
@@ -66,8 +69,7 @@ fun BottomNavBar(navController: NavHostController) {
         BottomNavItem("home", Icons.Default.Home),
         BottomNavItem("drafts", Icons.Default.Edit),
         BottomNavItem("upload", Icons.Default.AddCircle),
-        // Eğer Group ikonu hata verirse yerine Person kullandık,
-        // kütüphaneyi eklediysen Icons.Default.Group yapabilirsin.
+        // Group ikonu yoksa geçici olarak Person kullanıyoruz, varsa Icons.Default.Group yapabilirsin
         BottomNavItem("groups", Icons.Default.Person),
         BottomNavItem("profile", Icons.Default.Person)
     )

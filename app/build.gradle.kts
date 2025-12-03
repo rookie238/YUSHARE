@@ -85,4 +85,6 @@ dependencies {
 
     // BU SATIRI EKLE (Genişletilmiş İkon Paketi):
     implementation("androidx.compose.material:material-icons-extended:1.6.8")
+
+    implementation("com.cloudinary:cloudinary-android:2.5.0")
 }
