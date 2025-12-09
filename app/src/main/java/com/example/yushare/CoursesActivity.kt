@@ -1,4 +1,4 @@
-package com.example.yushare
+git push -u origin Furkangit push -u origin Furkangit push -u origin Furkangpackage com.example.yushare
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
