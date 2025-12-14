@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.yushare.R
 
 @Composable
 fun EditProfileDialog(
@@ -86,24 +87,35 @@ fun EditProfileDialog(
                 }
 
                 Box(
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                        .clickable { /* Resim Değiş */ }
+                ) {
+                    // YENİ: Beyaz Çerçeve (Arka Plan Dairesi)
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(width = 90.dp, height = 88.55.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFECEBED).copy(alpha = 0.69f))
                 ) {
                     Image(
-                        painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        painter = painterResource(id = R.drawable.avatar_placeholder),
                         contentDescription = "Profile Picture",
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .size(80.dp)
                             .clip(CircleShape)
                             .background(Color.Gray)
-                            .clickable { /* Resim Değiş */ }
+
                     )
+                        }
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .align(Alignment.BottomCenter) // Resmin tam alt ortası
-                            .offset(y = 10.dp) // Hafif aşağı sarkıtıyoruz (Badge gibi)
-                            .size(26.dp)       // Turkuaz dairenin boyutu
+                            .align(Alignment.BottomEnd)
+                            .offset(x = (-4).dp, y = (-4).dp) // "Sol Üst"e doğru kaydırma (içeri çekme
+                            .size(24.dp)       // Turkuaz dairenin boyutu
                             .clip(CircleShape)
                             .background(Color(0xFF01C8B3)) // FIGMA: Turkuaz Arka Plan
                     ) {
@@ -111,7 +123,7 @@ fun EditProfileDialog(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Edit",
                             tint = Color(0xFF23006A), // FIGMA: Koyu Mor İkon
-                            modifier = Modifier.size(18.dp) // İkon boyutu
+                            modifier = Modifier.size(16.dp) // İkon boyutu
                         )
                     }
                 }
@@ -124,11 +136,15 @@ fun EditProfileDialog(
                 ) {
                     Text(
                         text = "Change Profile Picture",
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif, // Baloo 2 ekleyince burayı değiştiririz
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp,
-                        color = Color.White,
-                        modifier = Modifier.clickable { /* Resim Değiş */ }
+                        style = TextStyle(
+                            fontFamily = FontFamily.SansSerif, // Baloo 2 font dosyan varsa buraya ekle
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        ),
+                        modifier = Modifier
+                            .padding(bottom = 16.dp) // Bio başlığıyla arasındaki mesafe
+                            .clickable { /* Resim Değiş */ }
                         )
                     Spacer(modifier = Modifier.height(2.dp))
 
