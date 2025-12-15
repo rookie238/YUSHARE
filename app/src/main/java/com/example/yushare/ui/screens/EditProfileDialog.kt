@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -27,6 +26,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.yushare.R
 
+val balooFont = FontFamily(
+    androidx.compose.ui.text.font.Font(R.font.baloo2_medium, FontWeight.Medium)
+)
+
 @Composable
 fun EditProfileDialog(
     onDismiss: () -> Unit,
@@ -35,19 +38,17 @@ fun EditProfileDialog(
     var bioText by remember { mutableStateOf(currentBio) }
 
     // --- 1. DIŞ KUTU (DIALOG) AYARLARI ---
-    val dialogColor = Color(0xFF35414C).copy(alpha = 0.72f) // %72 Opaklık
+    val dialogColor = Color(0xFF35414C).copy(alpha = 0.72f)
     val dialogWidth = 284.dp
     val dialogHeight = 408.dp
     val dialogRadius = 29.dp
 
     // --- 2. İÇ KUTU (BIO) AYARLARI ---
-    val bioBoxColor = Color(0xFFECEBED).copy(alpha = 0.66f) // %66 Opaklık
+    val bioBoxColor = Color(0xFFECEBED).copy(alpha = 0.66f)
     val bioBoxWidth = 187.dp
     val bioBoxHeight = 170.dp
     val bioBoxRadius = 25.dp
 
-    // --- 3. DİĞER RENKLER ---
-    val plusIconColor = Color(0xFF311B92) // Koyu Mor (Tahmini, sonra sabitleriz)
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -137,7 +138,7 @@ fun EditProfileDialog(
                     Text(
                         text = "Change Profile Picture",
                         style = TextStyle(
-                            fontFamily = FontFamily.SansSerif, // Baloo 2 font dosyan varsa buraya ekle
+                            fontFamily =balooFont,
                             fontWeight = FontWeight.Medium,
                             fontSize = 16.sp,
                             color = Color.White
@@ -155,7 +156,7 @@ fun EditProfileDialog(
                 // Bio Başlığı
                 Text(
                     text = "Bio",
-                    style = TextStyle(color = Color.White, fontSize = 14.sp),
+                    style = TextStyle(fontFamily = balooFont, color = Color.White, fontSize = 14.sp),
                     modifier = Modifier
                         .width(bioBoxWidth) // Başlık kutuyla aynı hizada başlasın
                         .padding(bottom = 4.dp)
@@ -177,7 +178,7 @@ fun EditProfileDialog(
                             color = Color(0xFFFEFEFE), // Görsele göre beyaz duruyor
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium, // Figma Kalınlığı
-                            fontFamily = FontFamily.SansSerif
+                            fontFamily = balooFont
                         ),
                         modifier = Modifier.fillMaxSize()
                     )
