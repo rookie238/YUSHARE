@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+
 import com.example.yushare.R
 
 val balooFont = FontFamily(
@@ -53,19 +52,16 @@ fun EditProfileDialog(
 
 
     Dialog(
-        onDismissRequest = { onDismiss() },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false
-        )
+        onDismissRequest = { onDismiss() }
+
     ) {
         // --- ANA DIALOG KUTUSU ---
-        Box(
+        Surface (
             modifier = Modifier
-                .width(dialogWidth)   // Figma: 284
-                .height(dialogHeight) // Figma: 408
-                .clip(RoundedCornerShape(dialogRadius)) // Figma: 29
-                .background(dialogColor)
+                .width(284.dp)   // Figma: 284
+                .height(408.dp),// Figma: 408
+                shape = RoundedCornerShape(29.dp), // Figma: 29
+            color = Color(0xFF35414C).copy(alpha = 0.72f)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),

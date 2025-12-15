@@ -113,7 +113,7 @@ fun ProfileScreen() {
                         Image(
                             painter = painterResource(id = R.drawable.avatar_placeholder),
                             contentDescription = "Profil Avatarı",
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier.size(100.dp)
                         )
                     }
