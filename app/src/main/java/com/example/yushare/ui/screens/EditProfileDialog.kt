@@ -13,7 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -71,18 +73,28 @@ fun EditProfileDialog(
             ) {
 
                 // Kapatma (X) Butonu - Sağ üst
-                Row(
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, end = 16.dp), // Kenar boşlukları
-                    horizontalArrangement = Arrangement.End
+                        .padding(top = 20.dp, end = 20.dp)
+                        .clickable { onDismiss() } // Tıklanabilir alan
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.White,
+                    Text(
+                        text = "x", // Figma'da bu bir ikon değil, "x" harfi
+                        style = TextStyle(
+                            fontFamily = balooFont,
+                            fontWeight = FontWeight.SemiBold, // Figma: SemiBold
+                            fontSize = 17.sp,                 // Figma: 17
+                            color = Color.White,              // Renk: Beyaz
+                            shadow = Shadow(                  // Efekt: Drop Shadow
+                                color = Color.Black.copy(alpha = 0.25f),
+                                offset = Offset(0f, 4f),
+                                blurRadius = 4f
+                            )
+                        ),
                         modifier = Modifier
-                            .size(20.dp)
+                            .align(Alignment.CenterEnd)
                             .clickable { onDismiss() }
                     )
                 }
