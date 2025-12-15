@@ -6,9 +6,18 @@ plugins {
 
 android {
     namespace = "com.example.yushare"
-    compileSdk {
-        version = release(36)
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.example.yushare"
+        minSdk = 24
+        targetSdk = 34 // Burayı da 36 yerine 34 yapalım.
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     defaultConfig {
         applicationId = "com.example.yushare"
@@ -54,6 +63,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.compose.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
