@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,10 +32,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.yushare.R
 
+val balooFontProfile = FontFamily(
+    Font(R.font.baloo2_medium, FontWeight.Medium),
+    Font(R.font.baloo2_medium, FontWeight.Bold),
+    Font(R.font.baloo2_medium, FontWeight.ExtraBold),
+    Font(R.font.baloo2_medium, FontWeight.SemiBold)
+)
+
 @Composable
 fun ProfileScreen() {
     var showMenu by remember { mutableStateOf(false) }
     var showEditProfile by remember { mutableStateOf(false) }
+
+    val userName = "Arda Demir"
+    val department = "Visual Communication Design"
+    val studentId = "20210584978"
+    var notesText by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -64,7 +77,7 @@ fun ProfileScreen() {
                     color = Color(0xFF23006A),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    fontFamily = FontFamily.Default,
+                    fontFamily = balooFontProfile,
                     modifier = Modifier.align(Alignment.Center)
                 )
 
@@ -72,7 +85,7 @@ fun ProfileScreen() {
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFC0BFC4))
+                        .background(Color(0xFFC0BFC4).copy(alpha = 0.5f))
                         .align(Alignment.CenterEnd)
                         .clickable { showMenu = true },
                     contentAlignment = Alignment.Center
@@ -130,7 +143,7 @@ fun ProfileScreen() {
                         color = Color(0xFF23006A),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        fontFamily = FontFamily.Default
+                        fontFamily = balooFontProfile
                     )
 
                     Spacer(modifier = Modifier.height(30.dp))
@@ -141,14 +154,14 @@ fun ProfileScreen() {
                             color = Color(0xFF23006A),
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 14.sp,
-                            fontFamily = FontFamily.Default
+                            fontFamily = balooFontProfile
                         )
                         Text(
                             text = "Visual Communication Design",
                             color = Color(0xFF23006A),
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
-                            fontFamily = FontFamily.Default
+                            fontFamily = balooFontProfile
                         )
                     }
 
@@ -160,19 +173,19 @@ fun ProfileScreen() {
                             color = Color(0xFF23006A),
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 14.sp,
-                            fontFamily = FontFamily.Default
+                            fontFamily = balooFontProfile
                         )
                         Text(
                             text = "20210584978",
                             color = Color(0xFF23006A),
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,
-                            fontFamily = FontFamily.Default
+                            fontFamily = balooFontProfile
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(120.dp))
+                Spacer(modifier = Modifier.height(60.dp))
 
                 // Notes alanı
                 Column(
@@ -185,7 +198,7 @@ fun ProfileScreen() {
                         color = Color(0xFF23006A),
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
-                        fontFamily = FontFamily.Default
+                        fontFamily = balooFontProfile
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -287,7 +300,7 @@ fun ProfileScreen() {
     if (showEditProfile) {
         EditProfileDialog(
             onDismiss = { showEditProfile = false },
-            currentBio = TODO() // Geri basınca kapat
+            currentBio = ""
         )
     }
 }
