@@ -5,15 +5,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,25 +28,29 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.yushare.R
 
+// Baloo Fontunu burada da tanımlayalım (veya ortak bir yerden çekebilirsin)
+val balooFontSettings = FontFamily(
+    Font(R.font.baloo2_medium, FontWeight.Medium),
+    Font(R.font.baloo2_medium, FontWeight.Bold),
+    Font(R.font.baloo2_medium, FontWeight.ExtraBold)
+)
+
 @Composable
 fun SettingsDialog(
     onDismiss: () -> Unit,
     onEditProfileClick: () -> Unit
 ) {
     val context = LocalContext.current
-
-    // --- 1. YENİ EKLENEN KISIM: Notification Penceresi Açık mı Kontrolü ---
     var showNotificationPrefs by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = { onDismiss() }) {
-        Card(
-            shape = RoundedCornerShape(30.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF6C7B8E) // Arka plan rengi
-            ),
+        // --- ANA ÇERÇEVE (Diğerleriyle Aynı Stil) ---
+        Surface(
             modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .heightIn(min = 500.dp, max = 650.dp)
+                .width(300.dp) // Genişlik ayarı
+                .heightIn(min = 300.dp, max = 500.dp),
+            shape = RoundedCornerShape(24.dp),
+            color = Color(0xFF35414C).copy(alpha = 0.72f) // Koyu, şeffaf tema rengimiz
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Column(
@@ -49,38 +60,51 @@ fun SettingsDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // --- ÜST BAŞLIK VE KAPATMA BUTONU ---
-                    Row(
+                    // --- 1. BAŞLIK VE KAPAT BUTONU ---
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 1.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(bottom = 5.dp),
                     ) {
                         Text(
                             text = "SETTINGS",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 1.sp
+                            modifier = Modifier.align(Alignment.Center),
+                            style = TextStyle(
+                                fontFamily = balooFontSettings,
+                                fontSize = 16.sp, // Figma'dan aldığımız boyut
+                                fontWeight = FontWeight.SemiBold, // Figma'dan aldığımız kalınlık
+                                color = Color.White,
+                                letterSpacing = 0.sp
+                            )
                         )
 
-                        IconButton(onClick = { onDismiss() }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_x_close_icon), // İkonun varsa kullan, yoksa hata verebilir (kontrol et)
-                                contentDescription = "Close",
-                                tint = Color.White,
-                                modifier = Modifier.size(28.dp)
+                        //2. x butonu
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 8.dp)
+                                .size(32.dp)
+                                .clickable { onDismiss() }
+                        ) {
+                            Text(
+                                text = "X",
+                                style = TextStyle(
+                                    fontFamily = balooFontSettings, // Baloo 2
+                                    fontSize = 17.sp, // Figma: 17
+                                    fontWeight = FontWeight.SemiBold, // Figma: SemiBold
+                                    color = Color.White // Figma: #FFFFFF
+                                )
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    // --- MENÜ LİSTESİ ---
+                    // --- 2. MENÜ LİSTESİ ---
                     val menuItems = listOf(
                         "Edit Profile",
-                        "Notification Preferences", // Yazım hatasını düzelttim
+                        "Notification Preferences",
                         "My Feedback Archive",
                         "Privacy and Visibility",
                         "Data Privacy Policy",
@@ -89,45 +113,22 @@ fun SettingsDialog(
                     )
 
                     menuItems.forEach { item ->
-                        Column {
-                            Text(
-                                text = item,
-                                color = Color.White,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-
-                                        when (item) {
-                                            "Edit Profile" -> {
-                                                onEditProfileClick()
-                                            }
-                                            "Notification Preferences" -> {
-                                                showNotificationPrefs = true // Bildirim penceresini aç!
-                                            }
-                                            else -> {
-                                                Toast.makeText(context, "$item seçildi", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    }
-                                    .padding(vertical = 16.dp)
-                            )
-
-                            // Log Out hariç hepsinin altına çizgi çek
-                            if (item != "Log Out") {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(1.dp)
-                                        .background(Color.White.copy(alpha = 0.2f))
-                                )
-                            }
-                        }
+                        SettingsItemRow(
+                            text = item,
+                            onClick = {
+                                when (item) {
+                                    "Edit Profile" -> onEditProfileClick()
+                                    "Notification Preferences" -> showNotificationPrefs = true
+                                    else -> Toast.makeText(context, "$item seçildi", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            showDivider = item != "Log Out", // Log Out hariç çizgi çek
+                            isLogOut = item == "Log Out" // Log Out rengi farklı olabilir
+                        )
                     }
                 }
 
-                // --- 3. BİLDİRİM PENCERESİNİ ÇAĞIRMA ---
+                // --- 3. Notification Penceresi Çağırma ---
                 if (showNotificationPrefs) {
                     NotificationPreferencesDialog(
                         onDismiss = { showNotificationPrefs = false }
@@ -138,11 +139,52 @@ fun SettingsDialog(
     }
 }
 
+// --- YARDIMCI BİLEŞEN: SATIR TASARIMI ---
+@Composable
+fun SettingsItemRow(
+    text: String,
+    onClick: () -> Unit,
+    showDivider: Boolean,
+    isLogOut: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp), // Satır yüksekliği
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = TextStyle(
+                    fontFamily = balooFontSettings,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White
+                )
+            )
+
+        }
+
+        // Alt Çizgi
+        if (showDivider) {
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = Color.White.copy(alpha = 0.15f) // Çok ince ve silik çizgi
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SettingsDialogPreview() {
-    SettingsDialog(
-        onDismiss = {},
-        onEditProfileClick = {}
-    )
+    Box(modifier = Modifier.fillMaxSize().background(Color.Gray)) {
+        SettingsDialog(onDismiss = {}, onEditProfileClick = {})
+    }
 }
