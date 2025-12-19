@@ -109,7 +109,7 @@ fun EditProfileDialog(
                             .background(Color(0xFFECEBED).copy(alpha = 0.69f))
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.avatar_placeholder),
+                        painter = painterResource(id = R.drawable.profile_avatar),
                         contentDescription = "Profile Picture",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier

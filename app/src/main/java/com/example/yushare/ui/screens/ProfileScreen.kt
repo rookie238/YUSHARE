@@ -1,23 +1,17 @@
 package com.example.yushare.ui.screens
 
-import EditProfileDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.yushare.R
 
+// --- 1. FONT VE RENKLER ---
 val balooFontProfile = FontFamily(
     Font(R.font.baloo2_medium, FontWeight.Medium),
     Font(R.font.baloo2_medium, FontWeight.Bold),
@@ -39,272 +34,138 @@ val balooFontProfile = FontFamily(
     Font(R.font.baloo2_medium, FontWeight.SemiBold)
 )
 
+val ProfileBgColor = Color(0xFFEFEDE6)
+val ProfileOrange = Color(0xFFFE9000)
+val ProfileBlue = Color(0xFF294BA3)
+
+// --- 2. ANA FONKSİYON (İsmi düzelttim: ProfileScreen) ---
 @Composable
 fun ProfileScreen() {
-    var showMenu by remember { mutableStateOf(false) }
-    var showEditProfile by remember { mutableStateOf(false) }
-
-    val userName = "Arda Demir"
-    val department = "Visual Communication Design"
-    val studentId = "20210584978"
-    var notesText by remember { mutableStateOf("") }
-
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ProfileBgColor)
     ) {
-        // Arka plan
-        Image(
-            painter = painterResource(id = R.drawable.profil_arkaplan),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        // Ana içerik
-        Column(
+        // --- A) TURUNCU HEADER ---
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 25.dp)
+                .fillMaxWidth()
+                .height(450.dp)
+                .clip(RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp))
+                .background(ProfileOrange)
         ) {
-            Spacer(modifier = Modifier.height(25.dp))
-
-            // Üst başlık + menü butonu
-            Box(
-                modifier = Modifier.fillMaxWidth()
+            // Üst Menü İkonları
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 50.dp, start = 24.dp, end = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                IconButton(
+                    onClick = { /* Geri Git */ },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .background(Color.White, CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = ProfileBlue
+                    )
+                }
+
                 Text(
-                    text = "PROFILE",
-                    color = Color(0xFF23006A),
+                    text = "MY PROFILE",
+                    color = ProfileBlue,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    fontFamily = balooFontProfile,
-                    modifier = Modifier.align(Alignment.Center)
+                    fontFamily = balooFontProfile
                 )
 
-                Box(
+                IconButton(
+                    onClick = { /* Menü Aç */ },
                     modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFC0BFC4).copy(alpha = 0.5f))
-                        .align(Alignment.CenterEnd)
-                        .clickable { showMenu = true },
-                    contentAlignment = Alignment.Center
+                        .size(42.dp)
+                        .background(Color.White, CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Menu,
                         contentDescription = "Menu",
-                        tint = Color(0xFF23006A),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            // Profil avatar + bilgiler
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Avatar
-                Box(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE0E0E0)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape)
-                            .background(Color.White),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.avatar_placeholder),
-                            contentDescription = "Profil Avatarı",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(100.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // İsim + Department + Student Id
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 1.dp)
-                ) {
-                    Text(
-                        text = "Arda Demir",
-                        color = Color(0xFF23006A),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontFamily = balooFontProfile
-                    )
-
-                    Spacer(modifier = Modifier.height(30.dp))
-
-                    Row {
-                        Text(
-                            text = "Department: ",
-                            color = Color(0xFF23006A),
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 14.sp,
-                            fontFamily = balooFontProfile
-                        )
-                        Text(
-                            text = "Visual Communication Design",
-                            color = Color(0xFF23006A),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp,
-                            fontFamily = balooFontProfile
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(25.dp))
-
-                    Row {
-                        Text(
-                            text = "Student Id: ",
-                            color = Color(0xFF23006A),
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 14.sp,
-                            fontFamily = balooFontProfile
-                        )
-                        Text(
-                            text = "20210584978",
-                            color = Color(0xFF23006A),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp,
-                            fontFamily = balooFontProfile
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(60.dp))
-
-                // Notes alanı
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp)
-                ) {
-                    Text(
-                        text = "Notes:",
-                        color = Color(0xFF23006A),
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp,
-                        fontFamily = balooFontProfile
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    var notesText by remember { mutableStateOf("") }
-
-                    TextField(
-                        value = notesText,
-                        onValueChange = { notesText = it },
-                        placeholder = {
-                            Text("", color = Color.Gray)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(150.dp),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White.copy(alpha = 0.6f),
-                            unfocusedContainerColor = Color.White.copy(alpha = 0.6f),
-                            disabledContainerColor = Color.White.copy(alpha = 0.6f),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        )
+                        tint = ProfileBlue
                     )
                 }
             }
         }
 
-        // --- ALT MENÜ BAŞLANGIÇ ---
+        // --- B) ORTA İÇERİK (Avatar + İsim) ---
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(110.dp))
+
+            // Avatar
+            Box(
+                modifier = Modifier
+                    .size(283.dp)
+                    .clip(CircleShape)
+                    .background(Color.Gray)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.profile_avatar),
+                    contentDescription = "Profile Photo",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // İsim
+            Text(
+                text = "Arda Demir",
+                color = ProfileBlue,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = balooFontProfile
+            )
+        }
+
+        // --- C) ALT MENÜ (Bottom Bar) ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(90.dp)
                 .align(Alignment.BottomCenter)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.bottom_bar_bg),
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 10.dp)
+                    .background(
+                        color = ProfileBlue,
+                        shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                    )
             )
-
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 10.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_home),
-                    contentDescription = "Home",
-                    tint = Color.White,
-                    modifier = Modifier.size(30.dp)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = "Edit",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(30.dp)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = "Add",
-                    tint = Color.White,
-                    modifier = Modifier.size(48.dp)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_groups),
-                    contentDescription = "Group",
-                    tint = Color.White,
-                    modifier = Modifier.size(30.dp)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_profile_custom),
-                    contentDescription = "Profile",
-                    tint = Color.White,
-                    modifier = Modifier.size(30.dp)
-                )
+                // İKON İSİMLERİNİ KONTROL ET
+                Icon(painter = painterResource(id = R.drawable.ic_nav_home), contentDescription = "Home", tint = Color.White, modifier = Modifier.size(32.dp))
+                Icon(painter = painterResource(id = R.drawable.ic_nav_school), contentDescription = "School", tint = Color.White, modifier = Modifier.size(36.dp))
+                Icon(painter = painterResource(id = R.drawable.ic_nav_add), contentDescription = "Add", tint = Color.White, modifier = Modifier.size(44.dp))
+                Icon(painter = painterResource(id = R.drawable.ic_nav_groups), contentDescription = "Groups", tint = Color.White, modifier = Modifier.size(36.dp))
+                Icon(painter = painterResource(id = R.drawable.ic_nav_profile), contentDescription = "Profile", tint = Color.White, modifier = Modifier.size(32.dp))
             }
         }
-        // --- ALT MENÜ BİTİŞ ---
-    } // end Box
-
-    // 1. AYARLAR PENCERESİ
-    if (showMenu) {
-        SettingsDialog(
-            onDismiss = { showMenu = false },
-            onEditProfileClick = {
-                showMenu = false       // Ayarlar menüsünü kapat
-                showEditProfile = true // Edit Profile penceresini aç
-            }
-        )
-    }
-
-    // 2. EDIT PROFILE PENCERESİ (Arkası flu kalacak!)
-    if (showEditProfile) {
-        EditProfileDialog(
-            onDismiss = { showEditProfile = false },
-            currentBio = ""
-        )
     }
 }
 
+// --- 3. PREVIEW FONKSİYONU ---
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
