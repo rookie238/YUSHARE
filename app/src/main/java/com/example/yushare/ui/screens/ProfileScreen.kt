@@ -5,12 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,10 +23,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.setValue
 import com.example.yushare.R
 
 // --- 1. FONT VE RENKLER ---
@@ -38,7 +41,7 @@ val poppinsFontFamily = FontFamily(
 val ProfileBgColor = Color(0xFFEFEDE6)
 val ProfileOrange = Color(0xFFFE9000)
 val ProfileBlue = Color(0xFF294BA3)
-val ProfileInfoBg = Color(0xFFD9D9D9)
+
 
 @Composable
 fun ProfileScreen() {
@@ -70,7 +73,8 @@ fun ProfileScreen() {
                         .size(56.dp)
                         .background(
                             color = Color(0xFFD7F171),
-                            shape = CircleShape)
+                            shape = CircleShape
+                        )
 
                 ) {
                     Icon(
@@ -91,13 +95,16 @@ fun ProfileScreen() {
                 IconButton(
                     onClick = { /* Menü Aç */ },
                     modifier = Modifier
-                        .size(42.dp)
-                        .background(Color.White, CircleShape)
+                        .size(56.dp)
+                        .background(
+                            color = Color(0xFFD7F171),
+                            shape = CircleShape
+                        )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Menu,
+                        painter = painterResource(id = R.drawable.ic_menu_burger),
                         contentDescription = "Menu",
-                        tint = ProfileBlue
+                        tint = Color.Black
                     )
                 }
             }
@@ -113,6 +120,7 @@ fun ProfileScreen() {
             Spacer(modifier = Modifier.height(95.dp))
 
             // Avatar
+            Spacer(modifier = Modifier.height(1.dp))
             Box(
                 modifier = Modifier
                     .size(283.dp)
@@ -127,26 +135,32 @@ fun ProfileScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // İsim
-            Text(
-                text = "Arda Demir",
-                color = ProfileBlue,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = poppinsFontFamily
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Arda Demir",
+                    color = ProfileBlue,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFontFamily,
+                    textAlign = TextAlign.Center
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
 
             // BİLGİ KARTI
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp) // Sağdan soldan biraz boşluk
                     .background(
-                        color = ProfileInfoBg,
-                        shape = RoundedCornerShape(50.dp)
+                        color = Color(0xFFD9D9D9),
+                        shape = RoundedCornerShape( 50.dp)
                     )
                     .padding(vertical = 50.dp, horizontal = 24.dp)
             ) {
@@ -196,35 +210,74 @@ fun ProfileScreen() {
         }
 
         // --- C) ALT MENÜ (Bottom Bar) ---
+        var selectedItemIndex by remember { mutableStateOf(4) }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(90.dp)
-                .align(Alignment.BottomCenter)
+                .height(70.dp) // Yüksekliği
+                .background(ProfileBlue) // Direkt mavi renk (Çizim yok)
+                .align(Alignment.BottomCenter) // Ekranın en altına yapıştır
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        color = ProfileBlue,
-                        shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                    )
-            )
+            // İkonları Yan Yana Diz
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.SpaceAround, // Eşit aralıklarla diz
+                verticalAlignment = Alignment.CenterVertically // Dikeyde ortala
             ) {
-                // İKON İSİMLERİNİ KONTROL ET
-                Icon(painter = painterResource(id = R.drawable.ic_nav_home), contentDescription = "Home", tint = Color.White, modifier = Modifier.size(32.dp))
-                Icon(painter = painterResource(id = R.drawable.ic_nav_school), contentDescription = "School", tint = Color.White, modifier = Modifier.size(36.dp))
-                Icon(painter = painterResource(id = R.drawable.ic_nav_add), contentDescription = "Add", tint = Color.White, modifier = Modifier.size(44.dp))
-                Icon(painter = painterResource(id = R.drawable.ic_nav_groups), contentDescription = "Groups", tint = Color.White, modifier = Modifier.size(36.dp))
-                Icon(painter = painterResource(id = R.drawable.ic_nav_profile), contentDescription = "Profile", tint = Color.White, modifier = Modifier.size(32.dp))
+                // 0: Ana Sayfa
+                IconButton(onClick = { selectedItemIndex = 0 }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_nav_home),
+                        contentDescription = "Home",
+                        tint = if (selectedItemIndex == 0) Color.White else Color.White.copy(alpha = 0.6f), // Seçili değilse biraz soluk yapalım mı?
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+
+                // 1: Okul
+                IconButton(onClick = { selectedItemIndex = 1 }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_nav_school),
+                        contentDescription = "School",
+                        tint = if (selectedItemIndex == 1) Color.White else Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
+
+                // 2: Ekle (+)
+                IconButton(onClick = { selectedItemIndex = 2 }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_nav_add),
+                        contentDescription = "Add",
+                        tint = if (selectedItemIndex == 2) Color.White else Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+
+                // 3: Gruplar
+                IconButton(onClick = { selectedItemIndex = 3 }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_nav_groups),
+                        contentDescription = "Groups",
+                        tint = if (selectedItemIndex == 3) Color.White else Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
+
+                // 4: Profil
+                IconButton(onClick = { selectedItemIndex = 4 }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_nav_profile),
+                        contentDescription = "Profile",
+                        tint = if (selectedItemIndex == 4) Color.White else Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
         }
     }
-}
+    }
 
 // --- 3. PREVIEW FONKSİYONU ---
 @Preview(showBackground = true)
