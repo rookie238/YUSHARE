@@ -18,9 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,8 +40,8 @@ val balooFontProfile = FontFamily(
 val ProfileBgColor = Color(0xFFEFEDE6)
 val ProfileOrange = Color(0xFFFE9000)
 val ProfileBlue = Color(0xFF294BA3)
+val ProfileInfoBg = Color(0xFFD9D9D9)
 
-// --- 2. ANA FONKSİYON (İsmi düzelttim: ProfileScreen) ---
 @Composable
 fun ProfileScreen() {
     Box(
@@ -62,16 +65,20 @@ fun ProfileScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Geri Butonu
                 IconButton(
                     onClick = { /* Geri Git */ },
                     modifier = Modifier
-                        .size(42.dp)
-                        .background(Color.White, CircleShape)
+                        .size(56.dp)
+                        .background(
+                            color = Color(0xFFD7F171),
+                            shape = CircleShape)
+
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(id = R.drawable.ic_back_arrow),
                         contentDescription = "Back",
-                        tint = ProfileBlue
+                        tint = Color.Black
                     )
                 }
 
@@ -105,7 +112,7 @@ fun ProfileScreen() {
                 .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(110.dp))
+            Spacer(modifier = Modifier.height(95.dp))
 
             // Avatar
             Box(
@@ -132,6 +139,62 @@ fun ProfileScreen() {
                 fontWeight = FontWeight.ExtraBold,
                 fontFamily = balooFontProfile
             )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // BİLGİ KARTI
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp) // Sağdan soldan biraz boşluk
+                    .background(
+                        color = ProfileInfoBg,
+                        shape = RoundedCornerShape(50.dp)
+                    )
+                    .padding(vertical = 50.dp, horizontal = 24.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+
+                    // -- Satır 1: Department --
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Department: ")
+                            }
+                            append("Visual Communication Design")
+                        },
+                        color = ProfileBlue,
+                        fontSize = 15.sp,
+                        fontFamily = balooFontProfile
+                    )
+                    // -- Satır 2: Student Id --
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Student Id: ")
+                            }
+                            append("20210584978")
+                        },
+                        color = ProfileBlue,
+                        fontSize = 15.sp,
+                        fontFamily = balooFontProfile
+                    )
+                    // -- Satır 3: Bio --
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Bio: ")
+                            }
+                            append(" Designing the world, one pixel at a time. Visual Communication Design Student. Powered by coffee and creativity. Always open to new projects and collaborations. ")
+                        },
+                        color = ProfileBlue,
+                        fontSize = 14.sp, // Bio biraz daha küçük olabilir
+                        fontFamily = balooFontProfile,
+                        lineHeight = 20.sp
+                    )
+                }
+            }
         }
 
         // --- C) ALT MENÜ (Bottom Bar) ---
