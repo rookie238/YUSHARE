@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,11 +29,10 @@ import androidx.compose.ui.unit.sp
 import com.example.yushare.R
 
 // --- 1. FONT VE RENKLER ---
-val balooFontProfile = FontFamily(
-    Font(R.font.baloo2_medium, FontWeight.Medium),
-    Font(R.font.baloo2_medium, FontWeight.Bold),
-    Font(R.font.baloo2_medium, FontWeight.ExtraBold),
-    Font(R.font.baloo2_medium, FontWeight.SemiBold)
+val poppinsFontFamily = FontFamily(
+    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.poppins_semibold, FontWeight.SemiBold),
+    Font(R.font.poppins_extrabold, FontWeight.ExtraBold)
 )
 
 val ProfileBgColor = Color(0xFFEFEDE6)
@@ -61,7 +59,7 @@ fun ProfileScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 50.dp, start = 24.dp, end = 24.dp),
+                    .padding(top = 27.dp, start = 20.dp, end = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -85,9 +83,9 @@ fun ProfileScreen() {
                 Text(
                     text = "MY PROFILE",
                     color = ProfileBlue,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontFamily = balooFontProfile
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFontFamily
                 )
 
                 IconButton(
@@ -137,7 +135,7 @@ fun ProfileScreen() {
                 color = ProfileBlue,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.ExtraBold,
-                fontFamily = balooFontProfile
+                fontFamily = poppinsFontFamily
             )
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -166,7 +164,7 @@ fun ProfileScreen() {
                         },
                         color = ProfileBlue,
                         fontSize = 15.sp,
-                        fontFamily = balooFontProfile
+                        fontFamily = poppinsFontFamily
                     )
                     // -- Satır 2: Student Id --
                     Text(
@@ -178,7 +176,7 @@ fun ProfileScreen() {
                         },
                         color = ProfileBlue,
                         fontSize = 15.sp,
-                        fontFamily = balooFontProfile
+                        fontFamily = poppinsFontFamily
                     )
                     // -- Satır 3: Bio --
                     Text(
@@ -190,7 +188,7 @@ fun ProfileScreen() {
                         },
                         color = ProfileBlue,
                         fontSize = 14.sp, // Bio biraz daha küçük olabilir
-                        fontFamily = balooFontProfile,
+                        fontFamily = poppinsFontFamily,
                         lineHeight = 20.sp
                     )
                 }
