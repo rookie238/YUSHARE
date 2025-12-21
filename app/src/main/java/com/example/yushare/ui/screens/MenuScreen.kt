@@ -1,5 +1,4 @@
-package com.example.yushare.ui.screens // ⚠️ BURAYA DİKKAT: Senin dosyanın en üstünde ne yazıyorsa onu yaz!
-
+package com.example.yushare.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
+
 import com.example.yushare.R
 
 // Rengi buraya sabitledim, hata vermesin diye
@@ -45,16 +44,17 @@ fun MenuScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(420.dp)
+                    .height(450.dp)
                     .background(
                         color = Color(0xFFFF9800),
-                        shape = RoundedCornerShape(bottomStart = 50.dp, bottomEnd = 50.dp)
+                        shape = RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp)
                     )
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Spacer(modifier = Modifier.height(1.dp))
                     // Üst Header
                     Box(
                         modifier = Modifier
@@ -66,42 +66,39 @@ fun MenuScreen() {
                             fontSize = 21.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MenuBlue,
+                            fontFamily = poppinsFontFamily,
                             modifier = Modifier.align(Alignment.Center)
                         )
 
-                        IconButton(
-                            onClick = { /* Geri Git */ },
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White, modifier = Modifier.size(30.dp))
-                        }
+
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(1.dp))
 
-                    // ⚠️ DİKKAT: Buradaki resim ismini kendi projenle aynı yap (örn: R.drawable.profile_pic)
-                    // Hata verirse burayı geçici olarak yorum satırı yap
                     Image(
                         painter = painterResource(id = R.drawable.profile_avatar),
                         contentDescription = "Profile Picture",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(140.dp)
-                            .clip(RoundedCornerShape(100))
+                            .size(283.dp)
+                            .clip(RoundedCornerShape(283.dp))
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
                         text = "Arda Demir",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = poppinsFontFamily,
                         color = MenuBlue
                     )
 
                     Text(
                         text = "arda.demir@std.yeditepe.edu.tr",
                         fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = poppinsFontFamily,
                         color = MenuBlue.copy(alpha = 0.7f)
                     )
 
@@ -111,7 +108,9 @@ fun MenuScreen() {
                         onClick = { },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD9D9D9)),
                         shape = RoundedCornerShape(50.dp),
-                        modifier = Modifier.width(150.dp)
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(40.dp)
                     ) {
                         Text("Edit Profile", color = MenuBlue, fontWeight = FontWeight.Bold)
                     }
