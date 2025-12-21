@@ -102,17 +102,22 @@ fun MenuScreen() {
                         color = MenuBlue.copy(alpha = 0.7f)
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Button(
                         onClick = { },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD9D9D9)),
-                        shape = RoundedCornerShape(50.dp),
+                        shape = RoundedCornerShape(30.dp),
                         modifier = Modifier
-                            .width(150.dp)
-                            .height(40.dp)
+                            .width(126.dp)
+                            .height(43.dp)
                     ) {
-                        Text("Edit Profile", color = MenuBlue, fontWeight = FontWeight.Bold)
+                        Text("Edit Profile",
+                            color = MenuBlue,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = poppinsFontFamily
+                        )
                     }
                 }
             }
@@ -144,8 +149,7 @@ fun MenuScreen() {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // ⚠️ DİKKAT: İkon isimlerini (R.drawable.xxx) kendi projendekilerle kontrol et
-                // Hata verirse bu Icon satırlarını silip yerlerine Text("X") koyarak dene.
+
                 Icon(painter = painterResource(id = R.drawable.ic_nav_home), contentDescription = null, tint = Color.White.copy(0.6f), modifier = Modifier.size(30.dp))
                 Icon(painter = painterResource(id = R.drawable.ic_nav_school), contentDescription = null, tint = Color.White.copy(0.6f), modifier = Modifier.size(34.dp))
                 Icon(painter = painterResource(id = R.drawable.ic_nav_add), contentDescription = null, tint = Color.White.copy(0.6f), modifier = Modifier.size(40.dp))
