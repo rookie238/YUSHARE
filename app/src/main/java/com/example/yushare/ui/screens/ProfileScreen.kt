@@ -44,7 +44,7 @@ val ProfileBlue = Color(0xFF294BA3)
 
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(onMenuClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -93,7 +93,7 @@ fun ProfileScreen() {
                 )
 
                 IconButton(
-                    onClick = { /* Menü Aç */ },
+                    onClick =  onMenuClick,
                     modifier = Modifier
                         .size(56.dp)
                         .background(
@@ -277,11 +277,11 @@ fun ProfileScreen() {
             }
         }
     }
-    }
+}
 
 // --- 3. PREVIEW FONKSİYONU ---
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    ProfileScreen(onMenuClick = {})
 }
