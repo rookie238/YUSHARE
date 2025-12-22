@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -28,6 +29,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
 
     // 1. ANAHTARIMIZ BURADA
     var showPasswordPopup by remember { mutableStateOf(false) }
+    var showNotificationPopup by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -141,7 +143,9 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                         onClick = { showPasswordPopup = true }
                     )
 
-                    MenuItem(text = "Notification Preferences")
+                    MenuItem(text = "Notification Preferences",
+                        onClick = { showNotificationPopup = true }
+                    )
                     MenuItem(text = "My Feedback Archive")
                     MenuItem(text = "Privacy and Visibility")
                     MenuItem(text = "Data Privacy Policy")
@@ -201,12 +205,14 @@ fun MenuScreen(onCloseClick: () -> Unit) {
         }
 
         // 3. POP-UP GÖRÜNTÜLEME ALANI (EN ÜST KATMAN)
-        // Eğer anahtar (showPasswordPopup) true ise, bu kutuyu göster
         if (showPasswordPopup) {
             ChangePasswordPopup(
-                onDismiss = { showPasswordPopup = false } // Kapat deyince false yap
+                onDismiss = { showPasswordPopup = false }
             )
         }
+            if (showNotificationPopup) {
+                NotificationPopup(onDismiss = { showNotificationPopup = false })
+            }
     }
 }
 
@@ -363,6 +369,138 @@ fun RealPasswordInput(text: String, onValueChange: (String) -> Unit, hint: Strin
             .width(228.dp)
             .height(40.dp)
     )
+}
+// --- NOTIFICATION POPUP TASARIMI ---
+
+@Composable
+fun NotificationPopup(onDismiss: () -> Unit) {
+    // Switch'lerin durumlarını tutan değişkenler (Şimdilik sahte veri)
+    // TRANSFERS
+    var uploadCompleted by remember { mutableStateOf(true) }
+    var downloadCompleted by remember { mutableStateOf(false) }
+    var newFileReceived by remember { mutableStateOf(false) }
+
+    // GROUPS
+    var groupUpload by remember { mutableStateOf(false) }
+    var groupDownload by remember { mutableStateOf(false) }
+    var groupNewFile by remember { mutableStateOf(false) }
+
+    // GENERAL
+    var appUpdates by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.6f))
+            .clickable { onDismiss() },
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .width(290.dp) // Diğer popup ile aynı genişlik
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color(0xFF5A5A5A))
+                .clickable(enabled = false) {}
+                .padding(20.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // BAŞLIK
+                Text(
+                    text = "Notification Preferences",
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFontFamily,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // --- BÖLÜM 1: TRANSFERS ---
+                SectionHeader(text = "TRANSFERS")
+                NotificationSwitchRow(text = "Upload Completed", checked = uploadCompleted, onCheckedChange = { uploadCompleted = it })
+                NotificationSwitchRow(text = "Download Completed", checked = downloadCompleted, onCheckedChange = { downloadCompleted = it })
+                NotificationSwitchRow(text = "New File Received", checked = newFileReceived, onCheckedChange = { newFileReceived = it })
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                // --- BÖLÜM 2: GROUPS ---
+                SectionHeader(text = "GROUPS")
+                NotificationSwitchRow(text = "Upload Completed", checked = groupUpload, onCheckedChange = { groupUpload = it })
+                NotificationSwitchRow(text = "Download Completed", checked = groupDownload, onCheckedChange = { groupDownload = it })
+                NotificationSwitchRow(text = "New File Received", checked = groupNewFile, onCheckedChange = { groupNewFile = it })
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                // --- BÖLÜM 3: GENERAL ---
+                SectionHeader(text = "GENERAL")
+                NotificationSwitchRow(text = "App Updates", checked = appUpdates, onCheckedChange = { appUpdates = it })
+            }
+
+            // KAPATMA İKONU (X)
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 10.dp, y = (-10).dp)
+                    .size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_x_close_icon),
+                    contentDescription = "Close",
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}
+
+// --- YARDIMCI BİLEŞENLER (Kod tekrarını önlemek için) ---
+
+@Composable
+fun SectionHeader(text: String) {
+    Text(
+        text = text,
+        color = Color.White,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        fontFamily = poppinsFontFamily,
+        modifier = Modifier.padding(bottom = 5.dp)
+    )
+}
+
+@Composable
+fun NotificationSwitchRow(text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp), // Satır yüksekliği
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = 12.sp,
+            fontFamily = poppinsFontFamily
+        )
+
+        // ÖZEL RENKLENDİRİLMİŞ SWITCH
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.scale(0.7f), // Switch biraz büyük gelebilir, %70 oranında küçülttük
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Color(0xFF4CAF50), // YEŞİL RENK (Aktifken)
+                uncheckedThumbColor = Color.White,
+                uncheckedTrackColor = Color.LightGray, // GRİ RENK (Pasifken)
+                uncheckedBorderColor = Color.Transparent
+            )
+        )
+    }
 }
 
 @Preview(showBackground = true)
