@@ -1,12 +1,11 @@
 package com.example.yushare.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -23,34 +22,78 @@ import com.example.yushare.components.PostItem
 import com.example.yushare.viewmodel.SharedViewModel
 
 @Composable
-fun CourseDetailScreen(courseTitle: String, viewModel: SharedViewModel, navController: NavHostController) {
+fun CourseDetailScreen(
+    courseTitle: String,
+    viewModel: SharedViewModel,
+    navController: NavHostController
+) {
+
+    // 1. Ekran açılınca o derse ait gönderileri çek
     LaunchedEffect(courseTitle) {
         viewModel.fetchPostsByCourse(courseTitle)
     }
 
+    // ViewModel'den gelen güncel gönderi listesi
     val filteredPosts = viewModel.selectedCoursePosts
 
-    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    // Tasarım Renkleri
+    val BackgroundColor = Color(0xFFF2F2F2)
+    val HeaderTextColor = Color(0xFF2B0B5E)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundColor)
+    ) {
+        // --- ÜST BAŞLIK (HEADER) ---
         Box(
-            modifier = Modifier.fillMaxWidth().height(60.dp).background(Color(0xFF5D1EC6)),
-            contentAlignment = Alignment.CenterStart
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 10.dp) // Status bar boşluğu
+                .padding(horizontal = 16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Geri",
+                        tint = HeaderTextColor
+                    )
                 }
-                Text(text = courseTitle, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = courseTitle,
+                    color = HeaderTextColor,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 
+        // --- İÇERİK LİSTESİ ---
         if (filteredPosts.isEmpty()) {
+            // Eğer gönderi yoksa
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("Bu derse ait henüz yükleme yapılmamış.", color = Color.Gray)
             }
         } else {
-            LazyColumn(contentPadding = PaddingValues(16.dp)) {
+            // Gönderiler varsa listele
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = 20.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Burada 'items' döngüsü bize her satır için bir 'post' nesnesi verir.
+                // Artık manuel olarak 'val name = ...' yapmana gerek yok.
+                // PostItem bileşeni zaten bu işi yapıyor.
                 items(filteredPosts) { post ->
-                    PostItem(post)
+
+                    PostItem(
+                        post = post, // Post nesnesini doğrudan aktarıyoruz
+                        navController = navController
+                    )
+
+                    // Listede elemanlar arası boşluk
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

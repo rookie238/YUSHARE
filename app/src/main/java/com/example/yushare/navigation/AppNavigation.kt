@@ -3,14 +3,12 @@ package com.example.yushare.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -20,13 +18,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-
-// --- DÜZELTİLEN IMPORTLAR ---
-// Hepsi "com.example.yushare.screens" (küçük harf) olmalı
-import com.example.yushare.screens.HomeScreen
-import com.example.yushare.screens.UploadScreen // <--- HATAYI ÇÖZEN SATIR BU
+import com.example.yushare.R
 import com.example.yushare.screens.CourseDetailScreen
+import com.example.yushare.screens.HomeScreen
 import com.example.yushare.screens.PlaceholderScreen
+import com.example.yushare.screens.PostDetailScreen // <--- BU IMPORT ÖNEMLİ
+import com.example.yushare.screens.UploadScreen
 import com.example.yushare.viewmodel.SharedViewModel
 
 @Composable
@@ -38,6 +35,7 @@ fun HomeWithNavBar() {
         bottomBar = { BottomNavBar(navController) }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
+            // NavGraph fonksiyonunu çağırıyoruz
             NavGraph(navController, sharedViewModel)
         }
     }
@@ -45,10 +43,15 @@ fun HomeWithNavBar() {
 
 @Composable
 fun NavGraph(navController: NavHostController, viewModel: SharedViewModel) {
-    NavHost(navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "home") {
+
+        // 1. Ana Sayfa
         composable("home") { HomeScreen(viewModel, navController) }
+
+        // 2. Yükleme Ekranı
         composable("upload") { UploadScreen(viewModel, navController) }
 
+        // 3. Kurs Detay Ekranı (Parametre alıyor)
         composable(
             "courseDetail/{courseTitle}",
             arguments = listOf(navArgument("courseTitle") { type = NavType.StringType })
@@ -57,6 +60,14 @@ fun NavGraph(navController: NavHostController, viewModel: SharedViewModel) {
             CourseDetailScreen(courseTitle, viewModel, navController)
         }
 
+        // --- 4. EKLENEN KISIM: GÖNDERİ DETAY EKRANI ---
+        // Yorum butonuna tıklayınca buraya gelecek
+        composable("post_detail_placeholder") {
+            PostDetailScreen(navController = navController)
+        }
+        // ----------------------------------------------
+
+        // Diğer Alt Menü Ekranları
         composable("drafts") { PlaceholderScreen("Taslaklar") }
         composable("groups") { PlaceholderScreen("Gruplar") }
         composable("profile") { PlaceholderScreen("Profil") }
@@ -66,12 +77,11 @@ fun NavGraph(navController: NavHostController, viewModel: SharedViewModel) {
 @Composable
 fun BottomNavBar(navController: NavHostController) {
     val items = listOf(
-        BottomNavItem("home", Icons.Default.Home),
-        BottomNavItem("drafts", Icons.Default.Edit),
-        BottomNavItem("upload", Icons.Default.AddCircle),
-        // Group ikonu yoksa geçici olarak Person kullanıyoruz, varsa Icons.Default.Group yapabilirsin
-        BottomNavItem("groups", Icons.Default.Person),
-        BottomNavItem("profile", Icons.Default.Person)
+        BottomNavItem("home", R.drawable.home),
+        BottomNavItem("drafts", R.drawable.student),
+        BottomNavItem("upload", R.drawable.upload),
+        BottomNavItem("groups", R.drawable.grup),
+        BottomNavItem("profile", R.drawable.profile)
     )
     NavigationBar(containerColor = Color(0xFF2B0B5E), contentColor = Color.White) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -82,11 +92,18 @@ fun BottomNavBar(navController: NavHostController) {
             NavigationBarItem(
                 selected = isSelected,
                 onClick = { navController.navigate(item.route) { popUpTo("home"); launchSingleTop = true } },
-                icon = { Icon(imageVector = item.icon, contentDescription = item.route, modifier = Modifier.size(if (isSpecial) 32.dp else 26.dp), tint = if (isSelected) Color.White else Color(0xFFAFAFAF)) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.route,
+                        modifier = Modifier.size(if (isSpecial) 32.dp else 26.dp),
+                        tint = if (isSelected) Color.White else Color(0xFFAFAFAF)
+                    )
+                },
                 colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
             )
         }
     }
 }
 
-data class BottomNavItem(val route: String, val icon: ImageVector)
+data class BottomNavItem(val route: String, val icon: Int)
