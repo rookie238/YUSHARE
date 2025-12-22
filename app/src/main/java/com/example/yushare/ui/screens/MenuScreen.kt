@@ -51,7 +51,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(450.dp)
+                        .height(465.dp)
                         .background(
                             color = Color(0xFFFF9800),
                             shape = RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp)
@@ -72,7 +72,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(56.dp)
+                                    .size(50.dp)
                                     .background(Color(0xFFD9D9D9), androidx.compose.foundation.shape.CircleShape)
                                     .clip(androidx.compose.foundation.shape.CircleShape)
                                     .clickable { onCloseClick() }
@@ -104,11 +104,11 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                             contentDescription = "Profile Picture",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(283.dp)
+                                .size(280.dp)
                                 .clip(RoundedCornerShape(283.dp))
                         )
 
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(1.dp))
 
                         Text(
                             text = "Arda Demir",
@@ -126,10 +126,10 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                             color = MenuBlue.copy(alpha = 0.7f)
                         )
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(1.dp))
 
                         Button(
-                            onClick = onCloseClick,
+                            onClick ={ },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD9D9D9)),
                             shape = RoundedCornerShape(30.dp),
                             modifier = Modifier
