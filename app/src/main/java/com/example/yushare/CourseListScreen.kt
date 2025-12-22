@@ -2,137 +2,209 @@ package com.example.yushare
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.yushare.R
+import androidx.compose.ui.zIndex
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseListScreen(
-    onCourseClick: (Int) -> Unit // Tıklanınca ID dönmesini sağlıyor
+    onCourseClick: (Int) -> Unit, // Bir kursa tıklandığında çalışacak fonksiyon
+    onBackClick: () -> Unit      // Geri butonuna tıklandığında çalışacak fonksiyon
 ) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = { /* Geri işlemi */ }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF310078)) // Mor renk
-            )
-        },
+    Scaffold(containerColor = Color(0xFFF3F4ED)) { padding ->
+        // Dersleri "semester" (dönem) alanına göre gruplandırır (Örn: "Fall 2025" -> [Dersler])
+        val grouped = sampleCourses.groupBy { it.semester }
+        val semesterEntries = grouped.entries.toList()
 
-    ) { paddingValues ->
-        Column(
+        // Verimli liste gösterimi sağlayan yapı
+        LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F0)) // Krem arka plan
-                .padding(16.dp)
+                .padding(horizontal = 20.dp)
         ) {
-            // Kullanıcı Kartı
-            UserCard()
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "All Courses",
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF310078),
-                    fontSize = 18.sp
-                )
-                Text(
-                    text = "Fall 2025",
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF310078),
-                    fontSize = 16.sp
-                )
+            // Listenin en başındaki sabit öğeler
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                BackButton(onClick = onBackClick)
+                Spacer(modifier = Modifier.height(16.dp))
+                UserCardNew() // Profil bilgileri kartı
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            // Her bir dönemi ve o döneme ait dersleri döngüye alır
+            semesterEntries.forEachIndexed { semesterIndex, (semester, courses) ->
+                // Dönem Başlığı (Örn: All courses - Fall 2025)
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Text(
+                            "All courses",
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF2B3A8C),
+                            fontSize = 15.sp
+                        )
+                        Text(
+                            semester,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF2B3A8C),
+                            fontSize = 15.sp
+                        )
+                    }
+                }
 
-            // Ders Listesi (Course.kt içindeki sampleCourses listesini kullanır)
-            LazyColumn {
-                items(sampleCourses) { course ->
-                    CourseItem(course = course, onClick = { onCourseClick(course.id) })
+                // O döneme ait ders kartlarını listeler
+                itemsIndexed(courses) { index, course ->
+                    // Kartların birbirini biraz kapatması (overlap) için ayrılan alan (işe yaramıyor)
+
+                    val stepHeight = 72.dp
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(stepHeight)
+                            // zIndex: Üstteki kartın alttakinin üstünde görünmesini sağlar.
+                            .zIndex((courses.size - index).toFloat())
+                    ) {
+                        CourseCard(course) { onCourseClick(course.id) }
+                    }
+                }
+
+                // Dönemler arası boşluk ve ayırıcı çizgi
+                item {
+                    Spacer(modifier = Modifier.height(50.dp))
+                    if (semesterIndex < semesterEntries.size - 1) {
+                        // Dönemler arasına turuncu ince bir çizgi çeker
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 10.dp),
+                            thickness = 1.5.dp,
+                            color = Color(0xFFFF9800)
+                        )
+                    }
                 }
             }
+            // Listenin en altına ekstra boşluk
+            item { Spacer(modifier = Modifier.height(50.dp)) }
         }
     }
 }
 
+/**
+ * Derslerin listede göründüğü kart tasarımı
+ */
 @Composable
-fun UserCard() {
+fun CourseCard(course: Course, onClick: () -> Unit) {
+    // Veri modelindeki CourseColor'a göre arka plan rengini belirler
+    val bgColor = when(course.colorType) {
+        CourseColor.BLUE -> Color(0xFF2B3A8C)
+        CourseColor.ORANGE -> Color(0xFFFF9800)
+        CourseColor.LIME -> Color(0xFFD7F171)
+    }
+    // Lime rengi için koyu, diğerleri için beyaz metin rengi ayarlar
+    val textColor = if(course.colorType == CourseColor.LIME) Color(0xFF2B3A8C) else Color.White
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(132.dp) // Kartın yüksekliği
+            .clickable { onClick() }
+            .shadow(4.dp, RoundedCornerShape(30.dp)),
+        shape = RoundedCornerShape(30.dp),
+        colors = CardDefaults.cardColors(containerColor = bgColor),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = course.code,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = textColor
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = course.name,
+                fontSize = 13.sp,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 24.dp),
+                lineHeight = 16.sp
+            )
+        }
+    }
+}
+
+/**
+ * Üst kısımdaki kullanıcı bilgilerini içeren yeşil profil kartı
+ */
+@Composable
+fun UserCardNew() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFD0D0D0), shape = RoundedCornerShape(16.dp))
-            .padding(16.dp),
+            .clip(RoundedCornerShape(24.dp))
+            .background(Color(0xFFD7F171))
+            .padding(18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Default.Person,
+            Icons.Default.Person,
             contentDescription = null,
-            modifier = Modifier.size(48.dp),
-            tint = Color(0xFF310078)
+            modifier = Modifier.size(40.dp),
+            tint = Color(0xFF2B3A8C)
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text("Visual Communication Design", fontWeight = FontWeight.Bold, color = Color(0xFF310078))
-            Text("2021060453/ Bachelor", fontSize = 12.sp, color = Color(0xFF310078))
+            Text("Arda Demir", fontWeight = FontWeight.Bold, color = Color(0xFF2B3A8C), fontSize = 17.sp)
+            Text("Visual Communication Design", color = Color(0xFF2B3A8C), fontSize = 13.sp)
+            Text("2021060453/ Bachelor", color = Color(0xFF2B3A8C).copy(alpha = 0.7f), fontSize = 12.sp)
         }
     }
 }
 
+/**
+ * Sol üstte bulunan yuvarlak geri dönüş butonu
+ */
 @Composable
-fun CourseItem(course: Course, onClick: () -> Unit) {
-    Column(
+fun BackButton(onClick: () -> Unit) {
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 8.dp)
+            .size(42.dp)
+            .clip(CircleShape)
+            .background(Color(0xFFD7F171))
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
     ) {
-        Text(course.code, fontWeight = FontWeight.Bold, color = Color(0xFF310078))
-        Text(course.name, color = Color(0xFF310078))
+        Icon(
+            // Sağdan sola yazılan dillerde otomatik yön değiştiren ikon tipi
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Back",
+            tint = Color(0xFF2B3A8C),
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
