@@ -39,7 +39,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // --- İÇERİK (Kaydırılabilir alanlar vs.) ---
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -61,13 +61,32 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
                         Spacer(modifier = Modifier.height(1.dp))
+
                         // Üst Header
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 20.dp, end = 20.dp)
+                                .padding(horizontal = 24.dp, vertical = 20.dp)
                         ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .background(Color(0xFFD9D9D9), androidx.compose.foundation.shape.CircleShape)
+                                    .clip(androidx.compose.foundation.shape.CircleShape)
+                                    .clickable { onCloseClick() }
+                                    .align(Alignment.CenterStart),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                                    contentDescription = "Back",
+                                    tint =  Color.Black,
+
+                                )
+
+                            }
                             Text(
                                 text = "My Profile",
                                 fontSize = 21.sp,
@@ -136,8 +155,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // 2. CHANGE PASSWORD BUTONUNU GÜNCELLEDİK
-                    // Artık tıklanınca showPasswordPopup'ı true yapıyor
+
                     MenuItem(
                         text = "Change Password",
                         onClick = { showPasswordPopup = true }
@@ -183,7 +201,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                 }
             }
 
-            // --- ALT BAR (Bottom Bar) ---
+            //  ALT BAR
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -204,7 +222,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
             }
         }
 
-        // 3. POP-UP GÖRÜNTÜLEME ALANI (EN ÜST KATMAN)
+        // 3. POP-UP GÖRÜNTÜLEME ALANI
         if (showPasswordPopup) {
             ChangePasswordPopup(
                 onDismiss = { showPasswordPopup = false }
@@ -223,7 +241,7 @@ fun MenuItem(text: String, textColor: Color = Color(0xFF294BA3), onClick: () -> 
             .width(366.dp)
             .height(38.dp)
             .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
-            .clickable { onClick() } // BURASI: Tıklamayı artık algılıyor!
+            .clickable { onClick() }
             .padding(horizontal = 10.dp),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -353,7 +371,7 @@ fun RealPasswordInput(text: String, onValueChange: (String) -> Unit, hint: Strin
                 fontFamily = poppinsFontFamily
             )
         },
-        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(), // Şifreyi **** yapar
+        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
         singleLine = true,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color(0xFFD9D9D9).copy(alpha = 0.5f),
@@ -370,11 +388,10 @@ fun RealPasswordInput(text: String, onValueChange: (String) -> Unit, hint: Strin
             .height(40.dp)
     )
 }
-// --- NOTIFICATION POPUP TASARIMI ---
+// --- NOTIFICATION ---
 
 @Composable
 fun NotificationPopup(onDismiss: () -> Unit) {
-    // Switch'lerin durumlarını tutan değişkenler (Şimdilik sahte veri)
     // TRANSFERS
     var uploadCompleted by remember { mutableStateOf(true) }
     var downloadCompleted by remember { mutableStateOf(false) }
@@ -397,7 +414,7 @@ fun NotificationPopup(onDismiss: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .width(290.dp) // Diğer popup ile aynı genişlik
+                .width(290.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color(0xFF5A5A5A))
                 .clickable(enabled = false) {}
@@ -457,7 +474,7 @@ fun NotificationPopup(onDismiss: () -> Unit) {
     }
 }
 
-// --- YARDIMCI BİLEŞENLER (Kod tekrarını önlemek için) ---
+//  YARDIMCI BİLEŞENLER
 
 @Composable
 fun SectionHeader(text: String) {
@@ -476,7 +493,7 @@ fun NotificationSwitchRow(text: String, checked: Boolean, onCheckedChange: (Bool
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp), // Satır yüksekliği
+            .height(30.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -487,16 +504,15 @@ fun NotificationSwitchRow(text: String, checked: Boolean, onCheckedChange: (Bool
             fontFamily = poppinsFontFamily
         )
 
-        // ÖZEL RENKLENDİRİLMİŞ SWITCH
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.scale(0.7f), // Switch biraz büyük gelebilir, %70 oranında küçülttük
+            modifier = Modifier.scale(0.7f),
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = Color(0xFF4CAF50), // YEŞİL RENK (Aktifken)
+                checkedTrackColor = Color(0xFF4CAF50),
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color.LightGray, // GRİ RENK (Pasifken)
+                uncheckedTrackColor = Color.LightGray,
                 uncheckedBorderColor = Color.Transparent
             )
         )

@@ -50,7 +50,7 @@ fun ProfileScreen(onMenuClick: () -> Unit) {
             .fillMaxSize()
             .background(ProfileBgColor)
     ) {
-        // --- A) TURUNCU HEADER ---
+        // TURUNCU HEADER
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +72,7 @@ fun ProfileScreen(onMenuClick: () -> Unit) {
                     modifier = Modifier
                         .size(56.dp)
                         .background(
-                            color = Color(0xFFD7F171),
+                            color = Color(0xFFD9D9D9),
                             shape = CircleShape
                         )
 
@@ -97,7 +97,7 @@ fun ProfileScreen(onMenuClick: () -> Unit) {
                     modifier = Modifier
                         .size(56.dp)
                         .background(
-                            color = Color(0xFFD7F171),
+                            color = Color(0xFFD9D9D9),
                             shape = CircleShape
                         )
                 ) {
@@ -110,7 +110,7 @@ fun ProfileScreen(onMenuClick: () -> Unit) {
             }
         }
 
-        // --- B) ORTA İÇERİK (Avatar + İsim) ---
+        //(Avatar + İsim)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -201,7 +201,7 @@ fun ProfileScreen(onMenuClick: () -> Unit) {
                             append(" Designing the world, one pixel at a time. Visual Communication Design Student. Powered by coffee and creativity. Always open to new projects and collaborations. ")
                         },
                         color = ProfileBlue,
-                        fontSize = 14.sp, // Bio biraz daha küçük olabilir
+                        fontSize = 14.sp,
                         fontFamily = poppinsFontFamily,
                         lineHeight = 20.sp
                     )
@@ -209,21 +209,21 @@ fun ProfileScreen(onMenuClick: () -> Unit) {
             }
         }
 
-        // --- C) ALT MENÜ (Bottom Bar) ---
+        // ALT MENÜ
         var selectedItemIndex by remember { mutableStateOf(4) }
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp) // Yüksekliği
-                .background(ProfileBlue) // Direkt mavi renk (Çizim yok)
-                .align(Alignment.BottomCenter) // Ekranın en altına yapıştır
+                .height(70.dp)
+                .background(ProfileBlue)
+                .align(Alignment.BottomCenter)
         ) {
             // İkonları Yan Yana Diz
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceAround, // Eşit aralıklarla diz
-                verticalAlignment = Alignment.CenterVertically // Dikeyde ortala
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 // 0: Ana Sayfa
                 IconButton(onClick = { selectedItemIndex = 0 }) {
