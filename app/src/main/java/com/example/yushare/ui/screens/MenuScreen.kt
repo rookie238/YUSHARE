@@ -210,8 +210,6 @@ fun MenuScreen(onCloseClick: () -> Unit) {
     }
 }
 
-// --- GÜNCELLENMİŞ YARDIMCI FONKSİYON: MenuItem ---
-// Artık onClick parametresi alıyor, varsayılanı boş {}
 @Composable
 fun MenuItem(text: String, textColor: Color = Color(0xFF294BA3), onClick: () -> Unit = {}) {
     Box(
@@ -249,26 +247,31 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .width(320.dp)
+                .width(290.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color(0xFF5A5A5A))
                 .clickable(enabled = false) {}
-                .padding(20.dp)
+                .padding(vertical = 20.dp)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
                 Text("Change Password",
                     color = Color.White,
-                    fontSize = 18.sp, fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily)
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFontFamily
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     "Your password at least must be at least 6 characters and should include a combination of numbers, letters and special characters(!@?*%).",
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 12.sp, textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center,
                     fontFamily = poppinsFontFamily,
-                    lineHeight = 16.sp
+                    lineHeight = 16.sp,
+                    modifier = Modifier.width(267.dp)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -301,19 +304,26 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
 
                 Button(
                     onClick = { onDismiss() },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC8C8C8)),
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier.fillMaxWidth().height(45.dp)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD9D9D9)),
+                    shape = RoundedCornerShape(30.dp),
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier
+                        .width(151.dp)
+                        .height(29.dp)
                 ) {
                     Text("Change Password",
                         color = Color(0xFF294BA3),
-                        fontWeight = FontWeight.Bold)
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = poppinsFontFamily
+                    )
                 }
             }
             IconButton(
                 onClick = onDismiss,
                 modifier = Modifier.align(Alignment.TopEnd)
                     .offset(x = 10.dp, y = (-10).dp)
+                    .size(24.dp)
             ) {
 
                 Icon(painterResource(id = R.drawable.ic_x_close_icon),
@@ -324,32 +334,24 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
     }
 }
 
-@Composable
-fun PasswordInputBox(hint: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(45.dp)
-            .background(Color(0xFF8E8E8E), RoundedCornerShape(10.dp))
-            .padding(horizontal = 15.dp),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Text(text = hint, color = Color.White.copy(alpha = 0.7f), fontSize = 14.sp)
-    }
-}
+
 @Composable
 fun RealPasswordInput(text: String, onValueChange: (String) -> Unit, hint: String) {
     TextField(
         value = text,
         onValueChange = onValueChange,
         placeholder = {
-            Text(text = hint, color = Color.White.copy(alpha = 0.5f), fontSize = 14.sp)
+            Text(text = hint,
+                color = Color.White.copy(alpha = 0.5f),
+                fontSize = 14.sp,
+                fontFamily = poppinsFontFamily
+            )
         },
         visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(), // Şifreyi **** yapar
         singleLine = true,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFF8E8E8E),
-            unfocusedContainerColor = Color(0xFF8E8E8E),
+            focusedContainerColor = Color(0xFFD9D9D9).copy(alpha = 0.5f),
+            unfocusedContainerColor = Color(0xFFD9D9D9).copy(alpha = 0.5f),
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             cursorColor = Color.White,
@@ -358,8 +360,8 @@ fun RealPasswordInput(text: String, onValueChange: (String) -> Unit, hint: Strin
         ),
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
+            .width(228.dp)
+            .height(40.dp)
     )
 }
 
