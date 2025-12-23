@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.yushare.R// R dosyasının import edildiğinden emin ol
-
 import com.example.yushare.ui.theme.*
 import kotlinx.coroutines.launch
 import androidx.compose.ui.tooling.preview.Preview

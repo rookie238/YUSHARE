@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.yushare.R // R dosyasının import edildiğinden emin ol
-import com.example.yushare.ui.theme.* // Color dosyasını import et
+import com.example.yushare.ui.theme.*
 
 
 @Composable

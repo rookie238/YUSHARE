@@ -2,6 +2,7 @@ package com.example.yushare.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+
 val YuChatBubble = Color(0xFFF7BF73) // Görseldeki açık turuncu/kavuniçi mesaj balonu rengi
 val YuInputBg    = Color(0xFFCED3DC) // Mesaj yazma alanının gri arka planı
 // Screenshot 2'deki Renk Paletine Göre Birebir Tanımlar
@@ -12,6 +13,13 @@ val YuOrange     = Color(0xFFFE9000) // Turuncu kartlar
 val YuBackground = Color(0xFFEFEDE6) // Bej/Krem Arka Plan
 val YuGray       = Color(0xFFA3A2A5) // Pasif ikonlar
 val YuWhite      = Color(0xFFFFFFFF) // Saf beyaz
+
+
+val AppPurple = Color(0xFF23006A)           // Ana Mor Renk (PROFILE yazısı, Bottom Bar)
+val ProfileCardBackground = Color(0xFFECEBED) // Profil Kartı Arka Planı
+val TextGray = Color(0xFFB2B2B2)          // "Department" gibi ikincil yazılar
+val IconGray = Color(0xFFC0BFC4)// Tahminen pasif ikon rengi
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
