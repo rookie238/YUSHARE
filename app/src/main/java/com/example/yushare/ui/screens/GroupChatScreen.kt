@@ -149,7 +149,7 @@ fun ChatHeader(groupName: String, onBackClick: () -> Unit) {
             // Geri Butonu
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(56.dp)
                     .clip(CircleShape)
                     .background(Color(0xFFDBDEE7))
                     .clickable { onBackClick() }
@@ -157,7 +157,7 @@ fun ChatHeader(groupName: String, onBackClick: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    painter = painterResource(id = R.drawable.ic_back_arrow),
                     contentDescription = "Back",
                     tint = YuMediumBlue
                 )

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AppInsightsSettings">
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    <option name="selectedTabId" value="Android Vitals" />
->>>>>>> b37e1b95f2dd986a364c8508a6ba3e503bdb02b0
-=======
->>>>>>> 5c4225ae3d1225640f0beeecc2c4118ccc5fcf9a
     <option name="tabSettings">
       <map>
         <entry key="Firebase Crashlytics">
@@ -15,17 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-<<<<<<< HEAD
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
-=======
                   <option name="appId" value="com.example.yushare" />
                   <option name="mobileSdkAppId" value="1:1053060390248:android:56c239e9ac7722d3ca0add" />
                   <option name="projectId" value="yushare-57c5b" />
                   <option name="projectNumber" value="1053060390248" />
->>>>>>> 5c4225ae3d1225640f0beeecc2c4118ccc5fcf9a
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
