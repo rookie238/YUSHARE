@@ -160,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                         NavigationBarItem(
                                             icon = {
                                                 Icon(
-                                                    painterResource(id = R.drawable.icon_home),
+                                                    painterResource(id = R.drawable.ic_nav_home),
                                                     contentDescription = "Home"
                                                 )
                                             },
