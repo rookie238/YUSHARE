@@ -191,7 +191,7 @@ fun MenuScreen(onCloseClick: () -> Unit) {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
-                                painter = painterResource(id = R.drawable.vector),
+                                painter = painterResource(id = R.drawable.vector1243),
                                 contentDescription = "Logout Arrow",
                                 tint = Color(0xFFBF0000),
                                 modifier = Modifier.size(16.dp)

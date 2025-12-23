@@ -1,7 +1,7 @@
 [versions]
 
-
-
+appcompat = "1.6.1"
+ui = "1.6.0"
 
 agp = "8.13.2"
 
@@ -16,7 +16,8 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.2"
 composeBom = "2024.09.00"
-appcompat = "1.7.0"
+
+
 material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
@@ -27,6 +28,10 @@ foundation = "1.7.2"
 
 
 
+
+
+
+firebaseStorageKtx = "22.0.1"
 
 
 [libraries]
@@ -45,6 +50,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -55,6 +61,10 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+
+
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 
 
 [plugins]

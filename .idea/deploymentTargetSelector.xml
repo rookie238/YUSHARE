@@ -3,6 +3,7 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <SelectionState runConfigName="ProfileScreenPreview (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -10,6 +11,9 @@
 =======
       <SelectionState runConfigName="app">
 >>>>>>> 18add4ba4f9072821a9781cb74543627ae197eff
+=======
+      <SelectionState runConfigName="app">
+>>>>>>> 5c4225ae3d1225640f0beeecc2c4118ccc5fcf9a
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
