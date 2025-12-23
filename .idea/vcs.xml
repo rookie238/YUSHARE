@@ -2,10 +2,14 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/main/java/com/example/yushare/ui/screens" vcs="Git" />
 =======
     <mapping directory="" vcs="Git" />
 >>>>>>> b37e1b95f2dd986a364c8508a6ba3e503bdb02b0
+=======
+    <mapping directory="" vcs="Git" />
+>>>>>>> 18add4ba4f9072821a9781cb74543627ae197eff
   </component>
 </project>

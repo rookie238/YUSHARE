@@ -2,10 +2,14 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
+<<<<<<< HEAD
       <SelectionState runConfigName="ProfileScreenPreview (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="MenuScreenPreview">
+=======
+      <SelectionState runConfigName="app">
+>>>>>>> 18add4ba4f9072821a9781cb74543627ae197eff
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
