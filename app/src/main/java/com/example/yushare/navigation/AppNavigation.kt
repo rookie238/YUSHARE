@@ -22,7 +22,7 @@ import com.example.yushare.R
 import com.example.yushare.screens.CourseDetailScreen
 import com.example.yushare.screens.HomeScreen
 import com.example.yushare.screens.PlaceholderScreen
-import com.example.yushare.screens.PostDetailScreen // <--- BU IMPORT ÖNEMLİ
+import com.example.yushare.screens.PostDetailScreen
 import com.example.yushare.screens.UploadScreen
 import com.example.yushare.viewmodel.SharedViewModel
 
