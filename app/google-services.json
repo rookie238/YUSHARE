@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1053060390248",
+    "project_id": "yushare-57c5b",
+    "storage_bucket": "yushare-57c5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053060390248:android:56c239e9ac7722d3ca0add",
+        "android_client_info": {
+          "package_name": "com.example.yushare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm1ncyNmGc0238-xdyZJWwFKYH4I8-gp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
