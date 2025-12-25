@@ -93,6 +93,8 @@ fun PostItem(post: Post, navController: NavController) {
 
                 contentDescription = "Like",
 
+                // Eğer beğenildiyse KIRMIZI, değilse GRİ yap
+                // (Not: Beyaz yaparsak arka plan da beyaz olduğu için ikon kaybolur, o yüzden gri/siyah çerçeve kullanıyoruz)
                 tint = if (isLiked) Color.Red else Color.Gray,
 
                 modifier = Modifier

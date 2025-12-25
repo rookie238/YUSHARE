@@ -93,9 +93,34 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
 
             // --- İÇERİK (Courses) ---
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text("Popular Courses", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = BodyTextColor)
+
+                // --- BAŞLIK ve SEE ALL BUTONU ---
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Popular Courses",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = BodyTextColor
+                    )
+
+                    Text(
+                        text = "See All",
+                        fontSize = 14.sp,
+                        color = HeaderTextColor,
+                        modifier = Modifier.clickable {
+                            // "Tümünü Gör" sayfasına yönlendirme
+                            navController.navigate("allCourses")
+                        }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(12.dp))
 
+                // --- DERSLER LİSTESİ (YANA KAYAR) ---
                 if (courses.isNotEmpty()) {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -111,15 +136,17 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(cardColor)
                                     .clickable {
-                                        // navController.navigate("course_detail/${course.courseId}")
+                                        // DERS DETAYINA GİDİŞ (Bağlantı Açıldı)
+                                        navController.navigate("courseDetail/${course.title}")
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = course.title, // course.title veya course.courseName
+                                    text = course.title,
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.padding(8.dp)
                                 )
                             }
                         }
@@ -129,6 +156,7 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+
                 // --- LATEST UPLOAD BAŞLIĞI ---
                 Text("Latest Upload", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = BodyTextColor)
                 Spacer(modifier = Modifier.height(12.dp))

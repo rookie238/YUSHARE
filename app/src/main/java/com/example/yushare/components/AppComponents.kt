@@ -93,6 +93,7 @@ fun PostItem(post: Post) {
             )
 
             // 2. Ders Adı
+            // Post modelinde "courseCode" string olarak tutulduğu için doğrudan onu yazdırıyoruz.
             Text(
                 text = post.courseCode,
                 fontWeight = FontWeight.Bold,

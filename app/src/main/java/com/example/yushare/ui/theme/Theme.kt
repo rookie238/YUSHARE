@@ -11,27 +11,20 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-// Koyu Tema Renkleri
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
-// Açık Tema Renkleri (Hata buradaydı, düzeltildi)
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
-    tertiary = Pink40,
+    tertiary = Pink40
 
-    // Eğer projenizdeki bej rengini (YuBackground) tüm uygulamanın
-    // arka planı yapmak isterseniz yorum satırını kaldırıp şunu ekleyin:
-
-    // background = YuBackground,
-    // surface = YuBackground,
-
-
-    /* Diğer varsayılan renkleri değiştirmek isterseniz:
+    /* Other default colors to override
+    background = Color(0xFFFFFBFE),
+    surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
@@ -43,8 +36,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun YUSHARETheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color Android 12+ cihazlarda duvar kağıdına göre renk alır.
-    // Kendi renklerinizi zorlamak istiyorsanız bunu 'false' yapın.
+    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
@@ -53,6 +45,7 @@ fun YUSHARETheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
+
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

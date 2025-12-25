@@ -1,5 +1,6 @@
 package com.example.yushare.screens
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -127,42 +128,53 @@ fun LoginScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { isRememberMe = !isRememberMe }
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .clickable { isRememberMe = !isRememberMe }, // <--- BU SATIRI EKLEYİN
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = if (isRememberMe) Icons.Outlined.CheckBox else Icons.Outlined.CheckBoxOutlineBlank,
-                                contentDescription = null, tint = DarkBlueColor
+                                contentDescription = null,
+                                tint = DarkBlueColor
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(text = "Remember me", fontSize = 14.sp, color = TextColor)
                         }
-                        Text(
-                            text = "Forgot password?", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black,
-                            modifier = Modifier.clickable { navController.navigate("forgot_password") }
-                        )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
                         onClick = {
-                            if (auth != null && db != null) {
-                                if (email.isNotEmpty() && password.isNotEmpty()) {
-                                    isLoading = true
-                                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                            if (email.isNotEmpty() && password.isNotEmpty()) {
+                                isLoading = true
+                                val auth = FirebaseAuth.getInstance()
+                                auth.signInWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener { task ->
                                         isLoading = false
                                         if (task.isSuccessful) {
-                                            val sharedPref = context.getSharedPreferences("AppPrefs", android.content.Context.MODE_PRIVATE)
-                                            with(sharedPref.edit()) { putBoolean("REMEMBER_ME", isRememberMe); apply() }
-                                            onLoginSuccess()
+                                            // --- EKLENEN KISIM BAŞLANGIÇ ---
+                                            // Tercihi SharedPreferences'a kaydet
+                                            val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                                            val editor = sharedPref.edit()
+                                            if (isRememberMe) {
+                                                editor.putBoolean("remember_me", true)
+                                            } else {
+                                                editor.putBoolean("remember_me", false)
+                                                // İsteğe bağlı: İşaretli değilse çıkış yapılmış sayılabilir ama
+                                                // genelde sadece "beni hatırlama" flag'i false yapılır.
+                                            }
+                                            editor.apply()
+                                            // --- EKLENEN KISIM BİTİŞ ---
+
+                                            onLoginSuccess() // Ana ekrana yönlendir
                                         } else {
-                                            Toast.makeText(context, "Hata: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(context, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                                         }
                                     }
-                                } else {
-                                    Toast.makeText(context, "Lütfen alanları doldurun.", Toast.LENGTH_SHORT).show()
-                                }
+                            } else {
+                                Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(50.dp),

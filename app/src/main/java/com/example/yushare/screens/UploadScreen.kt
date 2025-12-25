@@ -135,7 +135,7 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
                                 mimeType.contains("pdf") -> Icons.Default.Description
                                 mimeType.startsWith("audio") -> Icons.Default.Audiotrack
                                 mimeType.startsWith("video") -> Icons.Default.Image
-                                else -> Icons.Default.InsertDriveFile
+                                else -> Icons.Default.CloudUpload
                             }
                             Icon(icon, null, tint = darkPurple, modifier = Modifier.size(64.dp))
                             Spacer(modifier = Modifier.height(10.dp))
