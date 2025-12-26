@@ -124,6 +124,11 @@ class SharedViewModel : ViewModel() {
             }
     }
 
+    // Kullanıcının mail adresini getiren fonksiyon
+    fun getCurrentUserEmail(): String {
+        return auth.currentUser?.email ?: "Mail adresi yok"
+    }
+
     // Belirli bir dersin gönderilerini çekme
     fun fetchPostsByCourse(courseCode: String) {
         selectedCoursePosts.clear()
