@@ -1,6 +1,7 @@
 package com.example.yushare.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
@@ -33,6 +34,8 @@ import com.example.yushare.screens.MenuScreen
 // ViewModel Importları
 import com.example.yushare.viewmodel.SharedViewModel
 import com.example.yushare.viewmodel.ChatViewModel
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.yushare.screens.ForgotPasswordScreen
 
 
 @Composable
@@ -57,6 +60,10 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
     val chatViewModel: ChatViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "home") {
+
+        composable("forgot_password") {
+            ForgotPasswordScreen(navController = navController)
+        }
 
         // 1. Ana Sayfa
         composable("home") { HomeScreen(sharedViewModel, navController) }
@@ -136,7 +143,8 @@ fun BottomNavBar(navController: NavHostController) {
         BottomNavItem("groups", R.drawable.grup),
         BottomNavItem("profile", R.drawable.profile)
     )
-    NavigationBar(containerColor = Color(0xFF2B0B5E), contentColor = Color.White) {
+    NavigationBar(containerColor = Color(0xFF294BA3), contentColor = Color.White,
+        modifier = Modifier.height(55.dp)) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
@@ -160,3 +168,13 @@ fun BottomNavBar(navController: NavHostController) {
 }
 
 data class BottomNavItem(val route: String, val icon: Int)
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavBarPreview() {
+    // Preview ortamında sahte bir NavController oluşturuyoruz
+    val navController = rememberNavController()
+
+    // BottomNavBar'ı çağırıyoruz
+    BottomNavBar(navController = navController)
+}
