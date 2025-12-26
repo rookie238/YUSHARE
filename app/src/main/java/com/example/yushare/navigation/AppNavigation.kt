@@ -120,17 +120,8 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
 
         composable("menu") {
             MenuScreen(
-                onCloseClick = {
-                    navController.popBackStack()
-                },
-                onEditProfileClick = {
-                    // BURAYA YAPILACAK İŞLEM GELECEK
-                    // Henüz bir düzenleme sayfanız yoksa konsola yazdırabilirsiniz:
-                    println("Edit Profile tıklandı!")
-
-                    // Eğer sayfanız varsa şöyle yapabilirsiniz:
-                    // navController.navigate("edit_profile")
-                }
+                viewModel = sharedViewModel,
+                navController = navController
             )
         }
     }
