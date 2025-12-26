@@ -33,20 +33,16 @@ fun CoursesScreen(
     navController: NavHostController
 ) {
     val courses = viewModel.coursesList
-
-    // --- YENİ EKLENEN KISIM: Kullanıcı profil verisi ---
     val userProfile = viewModel.currentUserProfile.value
 
-    // Ekran açılınca kullanıcı verisini çek
     LaunchedEffect(Unit) {
         viewModel.fetchUserProfile()
     }
-    // --------------------------------------------------
 
-    // Dersleri Dönemlere Göre Grupla
-    val groupedCourses = courses.groupBy { it.term }.toSortedMap() // Sıralı gelmesi için toSortedMap eklenebilir
+    val groupedCourses = courses.groupBy { it.term }.toSortedMap()
 
-    val BackgroundColor = Color(0xFFF9F9F4) // Krem arka plan
+    // arkaplan rengi
+    val BackgroundColor = Color(0xFFF2F1EC)
 
     Column(
         modifier = Modifier
@@ -57,9 +53,13 @@ fun CoursesScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp)
+                .padding(top = 16.dp, start = 16.dp, bottom = 8.dp)
         ) {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .background(Color.LightGray.copy(alpha = 0.2f), CircleShape) // Buton arkasına hafif fon
+            ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color(0xFF2B0B5E))
             }
         }
@@ -68,52 +68,69 @@ fun CoursesScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(bottom = 20.dp)
+            contentPadding = PaddingValues(bottom = 100.dp), // Altta navigasyon bar için boşluk
+            // ders kartlarını üst üste bindiren kısım
+            verticalArrangement = Arrangement.spacedBy((-30).dp)
         ) {
-            // 1. ÖĞRENCİ KARTI (Veritabanından gelen veriyi gönderiyoruz)
+
+            // öğrenci kartı
             item {
                 StudentInfoCard(userProfile = userProfile)
 
-                Spacer(modifier = Modifier.height(20.dp))
+                // araya boşluk
+                Spacer(modifier = Modifier.height(40.dp))
+
                 Text(
                     text = "All courses",
                     color = Color(0xFF2B0B5E),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 20.sp
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                // Başlık ile ilk kart arası boşluk
+                Spacer(modifier = Modifier.height(60.dp))
             }
 
-            // 2. DÖNEMLERE GÖRE LİSTELEME
-            groupedCourses.forEach { (term, courseList) ->
+            // dönemlere göre listeleme fall 2026
+            // kaçıncı derste olduğumuzu bilmemiz için liste
+            groupedCourses.entries.toList().forEachIndexed { index, entry ->
+                val term = entry.key
+                val courseList = entry.value
+
                 item {
-                    // Dönem Başlığı (Sağda)
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                    // dersler arası boşluk tasarımı sağlamak için
+                    val topPadding = if (index == 0) 10.dp else 60.dp
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = topPadding) // Dinamik boşluk burada kullanılıyor
+                            .height(50.dp), // Kartların altına girmesi için "yastık" payı
+                        contentAlignment = Alignment.TopEnd // Yazıyı kutunun TEPESİNE yasla
+                    ) {
                         Text(
-                            text = term, // "Fall 2025" veritabanından gelecek
+                            text = term, // "Fall 2025"
                             color = Color(0xFF2B0B5E),
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(vertical = 8.dp)
+                            fontSize = 16.sp
                         )
                     }
                 }
 
                 items(courseList) { course ->
-                    // Renk Mantığı
+                    // ders kartı renkleri lacivert turuncu
                     val cardColor = when (courseList.indexOf(course) % 3) {
-                        0 -> Color(0xFF3B5BA5) // Koyu Mavi
-                        1 -> Color(0xFFFF9800) // Turuncu
-                        else -> Color(0xFFE53935) // Kırmızı
+                        0 -> Color(0xFF3B5BA5)
+                        1 -> Color(0xFFFF9800)
+                        else -> Color(0xFF1A237E)
                     }
 
                     CourseCardItem(course = course, color = cardColor) {
                         navController.navigate("courseDetail/${course.title}")
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                // Gruplar arası ekstra boşluk
+                item { Spacer(modifier = Modifier.height(40.dp)) }
             }
         }
     }
@@ -121,46 +138,55 @@ fun CoursesScreen(
 
 @Composable
 fun StudentInfoCard(userProfile: UserProfile) {
+    // profil kartı
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color(0xFFE0EFA5)) // Açık yeşil/sarı tonu
-            .padding(16.dp),
+            .height(110.dp) // Kartın yüksekliği
+            .clip(RoundedCornerShape(32.dp)) // Köşeleri yuvarlatma
+            .background(Color(0xFFDCEFA5)) // profil kartı arkaplan rengi
+            .padding(20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Profil İkonu
         Box(
             modifier = Modifier
-                .size(50.dp)
-                .border(1.dp, Color(0xFF2B0B5E), CircleShape)
-                .padding(8.dp),
+                .size(60.dp)
+
+                .padding(0.dp),
             contentAlignment = Alignment.Center
         ) {
-            Icon(painter = painterResource(id = R.drawable.profile), contentDescription = null, tint = Color(0xFF2B0B5E))
+
+            Icon(
+                painter = painterResource(id = R.drawable.profile), // Senin drawable kaynağın
+                contentDescription = null,
+                tint = Color(0xFF2B0B5E),
+                modifier = Modifier.size(48.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
-        // --- DİNAMİK VERİ KISMI ---
-        Column {
-            // İsim Soyisim (Database: name)
+        // --- YAZILAR ---
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
-                text = userProfile.name,
+                text = userProfile.name, //  öğrenci adı
                 fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
                 color = Color(0xFF2B0B5E)
             )
-            // Bölüm (Database: department)
             Text(
-                text = userProfile.department,
-                fontSize = 12.sp,
-                color = Color(0xFF2B0B5E)
+                text = userProfile.department, // bölüm
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF2B0B5E).copy(alpha = 0.8f)
             )
-            // Okul No / Derece (Database: id / degree)
             Text(
-                text = "${userProfile.studentId}/ ${userProfile.degree}",
+                text = "${userProfile.studentId} / ${userProfile.degree}",
                 fontSize = 12.sp,
-                color = Color.Gray
+                color = Color(0xFF2B0B5E).copy(alpha = 0.6f)
             )
         }
     }
@@ -168,27 +194,48 @@ fun StudentInfoCard(userProfile: UserProfile) {
 
 @Composable
 fun CourseCardItem(course: Course, color: Color, onClick: () -> Unit) {
+    // Ders Kartları
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
-            .clip(RoundedCornerShape(20.dp)) // Köşeleri yuvarlatılmış
+            .height(140.dp)
+            .clip(RoundedCornerShape(28.dp)) // Yuvarlatılmış köşeler
             .background(color)
             .clickable { onClick() }
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .padding(24.dp), // İçerik padding'i arttırıldı
+        contentAlignment = Alignment.TopCenter // Yazılar üst tarafa yakın
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            // Ders Kodu
             Text(
-                text = course.title, // COMM 101
+                text = course.title,
                 color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 20.sp,
+                letterSpacing = 1.sp
             )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Ders Adı Altı Çizgili Efekt
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(2.dp)
+                    .background(Color.White.copy(alpha = 0.5f))
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Ders Adı
             Text(
-                text = course.subtitle, // Introduction to...
+                text = course.subtitle,
                 color = Color.White.copy(alpha = 0.9f),
-                fontSize = 12.sp
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
             )
         }
     }

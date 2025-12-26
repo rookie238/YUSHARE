@@ -132,20 +132,7 @@ fun CourseDetailScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            // 3. GÖNDERİLER / YORUMLAR (Comments/Posts)
-            if (filteredPosts.isEmpty()) {
-                item {
-                    Text("Henüz yorum veya dosya yok.", color = Color.Gray, fontSize = 14.sp)
-                }
-            } else {
-                items(filteredPosts) { post ->
-                    // Mevcut PostItem bileşenini kullanıyoruz
-                    // Tasarımda mavi kutu içinde görünüyor, PostItem tasarımını da ona benzetebiliriz
-                    // Ama şimdilik mevcut yapıyı koruyoruz.
-                    PostItem(post = post, navController = navController)
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
+
         }
     }
 }
