@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -127,20 +128,35 @@ fun LoginScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // --- SOL TARAF: Remember Me ---
                         Row(
                             modifier = Modifier
                                 .padding(bottom = 16.dp)
-                                .clickable { isRememberMe = !isRememberMe }, // <--- BU SATIRI EKLEYİN
+                                .clickable { isRememberMe = !isRememberMe },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = if (isRememberMe) Icons.Outlined.CheckBox else Icons.Outlined.CheckBoxOutlineBlank,
                                 contentDescription = null,
-                                tint = DarkBlueColor
+                                tint = DarkBlueColor // Eğer hata verirse Color(0xFF294BA3) kullanabilirsin
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(text = "Remember me", fontSize = 14.sp, color = TextColor)
                         }
+
+                        // --- SAĞ TARAF: Forgot Password ---
+                        Text(
+                            text = "Forgot Password?",
+                            fontSize = 14.sp,
+                            color = Black, // Veya kendi renk kodunu kullan
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .clickable {
+                                    // Şifremi unuttum sayfasına yönlendirme
+                                    navController.navigate("forgot_password")
+                                }
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -177,7 +193,6 @@ fun LoginScreen(
                                 Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().height(50.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = DarkBlueColor),
                         shape = RoundedCornerShape(25.dp),
                         enabled = !isLoading
@@ -185,8 +200,20 @@ fun LoginScreen(
                         if (isLoading) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                         else Text(text = "Sign in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "Register using your Google account!", fontSize = 14.sp, color = TextColor)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Image(
+                        painter = painterResource(id = R.drawable.googlelogo),
+                        contentDescription = "Google Sign In",
+                        modifier = Modifier
+                            .size(75.dp)
+                            .clickable { Toast.makeText(context, "Google Sign In Clicked", Toast.LENGTH_SHORT).show() }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Row(modifier = Modifier.padding(bottom = 16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(text = "Don't have an account? ", fontSize = 14.sp, color = TextColor)

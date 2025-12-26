@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,11 +37,14 @@ import com.example.yushare.ui.theme.YUSHARETheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+
 @Composable
 fun RegisterScreen(
     navController: NavController,
     isPreview: Boolean = false
 ) {
+
+    
     // Form alanları
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -96,7 +100,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 // "Let's you in" Yazısı
                 Text(
-                    text = "Let's you in",
+                    text = "Get started!",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -269,20 +273,20 @@ fun RegisterScreen(
                                                 db.collection("users").document(uid).set(userMap)
                                                     .addOnSuccessListener {
                                                         isLoading = false
-                                                        Toast.makeText(context, "Kayıt Başarılı!", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, "Registration Successful!", Toast.LENGTH_SHORT).show()
                                                         navController.navigate("home") {
                                                             popUpTo("login") { inclusive = true }
                                                         }
                                                     }
                                                     .addOnFailureListener {
                                                         isLoading = false
-                                                        Toast.makeText(context, "Veritabanı hatası", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, "Database error", Toast.LENGTH_SHORT).show()
                                                     }
                                             }
                                         }
                                         .addOnFailureListener {
                                             isLoading = false
-                                            Toast.makeText(context, "Kayıt Hatası: ${it.message}", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Registration Error: ${it.message}", Toast.LENGTH_SHORT).show()
                                         }
                                 }
                             }
@@ -312,25 +316,17 @@ fun RegisterScreen(
 
                     // GOOGLE ICON (Placeholder)
                     // Gerçek resim için res/drawable klasörüne 'google_logo' ekleyin ve aşağıdaki yorumu açın:
-                    /*
+
                     Image(
-                        painter = painterResource(id = R.drawable.google_logo),
+                        painter = painterResource(id = R.drawable.googlelogo),
                         contentDescription = "Google Sign In",
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(75.dp)
                             .clickable { Toast.makeText(context, "Google Sign In Clicked", Toast.LENGTH_SHORT).show() }
                     )
-                    */
-                    // Geçici İkon:
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.White, shape = RoundedCornerShape(20.dp))
-                            .clickable { /* Google Login Logic */ },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("G", fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Color.Red)
-                    }
+
+
+
 
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -362,7 +358,8 @@ fun RegisterScreenPreview() {
     YUSHARETheme {
         RegisterScreen(
             navController = rememberNavController(),
-            isPreview = true
+            isPreview = true, // Firebase hatalarını önlemek için true olmalı
+
         )
     }
 }

@@ -75,18 +75,7 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
                     )
                 }
 
-                // B) Sağdaki Zil Butonu (Placeholder)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = { navController.navigate("notifications") }
-                    ) {
-                        // İkon eklenebilir, şu an boş
-                    }
-                }
+
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -113,7 +102,7 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
                         color = HeaderTextColor,
                         modifier = Modifier.clickable {
                             // "Tümünü Gör" sayfasına yönlendirme
-                            navController.navigate("allCourses")
+                            navController.navigate("drafts")
                         }
                     )
                 }
@@ -152,7 +141,7 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
                         }
                     }
                 } else {
-                    Text("Dersler yükleniyor...", color = Color.Gray)
+                    Text("Lessons are loading...", color = Color.Gray)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -165,7 +154,7 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
 
         // --- GÖNDERİLER (POSTS) ---
         if (posts.isEmpty()) {
-            item { Text("Henüz yükleme yok.", Modifier.padding(16.dp), color = Color.Gray) }
+            item { Text("No uploads yet.", Modifier.padding(16.dp), color = Color.Gray) }
         } else {
             items(posts) { post ->
                 // GÜNCELLEME: navController parametresi eklendi
