@@ -529,7 +529,7 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
     }
 }
 
-// --- YARDIMCI BİLEŞENLER (REVİZE EDİLDİ - DAHA KÜÇÜK) ---
+// YARDIMCI BİLEŞENLER
 
 @Composable
 fun SectionHeader(text: String) {
@@ -554,7 +554,7 @@ fun NotificationSwitchRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 0.dp), // Dikey padding sıfırlandı, daha sıkışık olması için
+            .padding(vertical = 0.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -574,7 +574,7 @@ fun NotificationSwitchRow(
                 uncheckedThumbColor = Color.LightGray,
                 uncheckedTrackColor = Color.Gray
             ),
-            modifier = Modifier.scale(0.7f) // %70 boyutuna küçültüldü
+            modifier = Modifier.scale(0.7f)
         )
     }
 }
