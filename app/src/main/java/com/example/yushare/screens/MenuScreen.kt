@@ -35,8 +35,18 @@ import com.google.firebase.auth.FirebaseAuth
 
 // Renk Tanımları
 val MenuBlue = Color(0xFF294BA3)
-val PopupBackground = Color(0xFF5A5A5A) // Görseldeki koyu gri renk
-val SwitchGreen = Color(0xFF4CAF50) // Switch açık rengi
+val PopupBackground = Color(0xFF5A5A5A)
+val SwitchGreen = Color(0xFF4CAF50)
+
+// NOT: Eğer poppinsFontFamily başka bir dosyada (örn: ProfileScreen.kt) zaten tanımlıysa
+// aşağıdaki bloğu silebilirsin.
+/*
+val poppinsFontFamily = FontFamily(
+    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.poppins_semibold, FontWeight.SemiBold),
+    Font(R.font.poppins_extrabold, FontWeight.ExtraBold)
+)
+*/
 
 @Composable
 fun MenuScreen(
@@ -62,132 +72,175 @@ fun MenuScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // --- TURUNCU HEADER KISMI ---
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.55f)
-                    .background(
-                        color = Color(0xFFFF9800),
-                        shape = RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // Geri Dön butonu ve Başlık
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 40.dp, start = 24.dp, end = 24.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .background(Color(0xFFD9D9D9), CircleShape)
-                                .clip(CircleShape)
-                                .clickable { navController.popBackStack() }
-                                .align(Alignment.CenterStart),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "Back", tint = Color.Black)
-                        }
-                        Text(
-                            text = "My Profile",
-                            fontSize = 21.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MenuBlue,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-
-                    // Profil Resmi
-                    Image(
-                        painter = painterResource(id = R.drawable.profile_avatar),
-                        contentDescription = "Profile Picture",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .padding(vertical = 10.dp)
-                            .clip(CircleShape)
-                    )
-
-                    // İsim ve Mail
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = userProfile.name,
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MenuBlue
-                        )
-                        Text(
-                            text = userEmail,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = MenuBlue.copy(alpha = 0.7f)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Edit Profile Butonu
-                    Button(
-                        onClick = { showEditProfilePopup = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD9D9D9)),
-                        shape = RoundedCornerShape(30.dp),
-                        modifier = Modifier
-                            .width(140.dp)
-                            .height(45.dp)
-                    ) {
-                        Text("Edit Profile", color = MenuBlue, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            }
-
-            // --- MENÜ LİSTESİ ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.45f)
-                    .padding(horizontal = 24.dp, vertical = 20.dp),
-                verticalArrangement = Arrangement.SpaceEvenly
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MenuItem(text = "Change Password", onClick = { showPasswordPopup = true })
-                MenuItem(text = "Notification Preferences", onClick = { showNotificationPopup = true })
-                MenuItem(text = "My Feedback Archive")
-                MenuItem(text = "Privacy and Visibility")
-                MenuItem(text = "Help & Support")
 
-                // Logout
+                // --- TURUNCU HEADER KISMI ---
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(45.dp)
-                        .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
-                        .clickable {
-                            auth.signOut()
-                            (context as? android.app.Activity)?.finish()
-                        }
-                        .padding(horizontal = 15.dp),
-                    contentAlignment = Alignment.CenterStart
+                        .height(465.dp)
+                        .background(
+                            color = Color(0xFFFF9800),
+                            shape = RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp)
+                        )
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Logout", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Color(0xFFBF0000))
-                        Icon(painter = painterResource(id = R.drawable.vector), contentDescription = null, tint = Color(0xFFBF0000), modifier = Modifier.size(16.dp))
+
+                        Spacer(modifier = Modifier.height(1.dp))
+                        // Geri Dön butonu ve Başlık
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 20.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .background(
+                                        Color(0xFFD9D9D9),
+                                        CircleShape
+                                    )
+                                    .clip(CircleShape)
+                                    .clickable { navController.popBackStack() }
+                                    .align(Alignment.CenterStart),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                                    contentDescription = "Back",
+                                    tint = Color.Black
+                                )
+                            }
+                            Text(
+                                text = "My Profile",
+                                fontSize = 21.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MenuBlue,
+                                fontFamily = poppinsFontFamily,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(1.dp))
+
+                        // Profil Resmi
+                        Image(
+                            painter = painterResource(id = R.drawable.profile_avatar),
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(280.dp)
+                                .clip(RoundedCornerShape(283.dp))
+                        )
+
+                        Spacer(modifier = Modifier.height(1.dp))
+
+                        // İsim ve Mail
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = userProfile.name,
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = poppinsFontFamily,
+                                color = MenuBlue
+                            )
+                            Text(
+                                text = userEmail,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                fontFamily = poppinsFontFamily,
+                                color = MenuBlue.copy(alpha = 0.7f)
+                            )
+                        } // İsim Column Kapanışı
+
+                        Spacer(modifier = Modifier.height(1.dp))
+
+                        // Edit Profile Butonu
+                        Button(
+                            onClick = { showEditProfilePopup = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD9D9D9)),
+                            shape = RoundedCornerShape(30.dp),
+                            modifier = Modifier
+                                .width(126.dp)
+                                .height(43.dp)
+                        ) {
+                            Text(
+                                "Edit Profile",
+                                color = MenuBlue,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = poppinsFontFamily
+                            )
+                        }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // --- MENÜ LİSTESİ ---
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    MenuItem(text = "Change Password", onClick = { showPasswordPopup = true })
+                    MenuItem(
+                        text = "Notification Preferences",
+                        onClick = { showNotificationPopup = true })
+                    MenuItem(text = "My Feedback Archive")
+                    MenuItem(text = "Privacy and Visibility")
+                    MenuItem(text = "Help & Support")
+
+                    // Logout
+                    Box(
+                        modifier = Modifier
+                            .width(366.dp)
+                            .height(38.dp)
+                            .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
+                            .clickable {
+                                auth.signOut()
+                                (context as? android.app.Activity)?.finish()
+                            }
+                            .padding(horizontal = 10.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "Logout",
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp,
+                                color = Color(0xFFBF0000)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.vector),
+                                contentDescription = "Logout Arrow",
+                                tint = Color(0xFFBF0000),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
 
@@ -224,17 +277,23 @@ fun MenuScreen(
 // ----------------------------------------------------------------
 
 @Composable
-fun MenuItem(text: String, onClick: () -> Unit = {}) {
+fun MenuItem(text: String, textColor: Color = Color(0xFF294BA3), onClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp)
+            .width(366.dp)
+            .height(38.dp)
             .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
             .clickable { onClick() }
-            .padding(horizontal = 15.dp),
+            .padding(horizontal = 10.dp),
         contentAlignment = Alignment.CenterStart
     ) {
-        Text(text, fontWeight = FontWeight.Medium, fontSize = 15.sp, color = MenuBlue)
+        Text(
+            text = text,
+            fontFamily = poppinsFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            color = textColor
+        )
     }
 }
 
@@ -268,12 +327,19 @@ fun EditProfilePopup(
                     painter = painterResource(id = R.drawable.profile_avatar),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(80.dp).clip(CircleShape)
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("Name", color = Color.White, fontSize = 14.sp, modifier = Modifier.align(Alignment.Start))
+                Text(
+                    "Name",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
                 BasicTextField(
                     value = nameText,
                     onValueChange = { nameText = it },
@@ -288,7 +354,12 @@ fun EditProfilePopup(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Bio", color = Color.White, fontSize = 14.sp, modifier = Modifier.align(Alignment.Start))
+                Text(
+                    "Bio",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
                 BasicTextField(
                     value = bioText,
                     onValueChange = { bioText = it },
@@ -315,15 +386,21 @@ fun EditProfilePopup(
 
             IconButton(
                 onClick = onDismiss,
-                modifier = Modifier.align(Alignment.TopEnd).offset(x = 10.dp, y = (-10).dp)
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 10.dp, y = (-10).dp)
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_x_close_icon), contentDescription = null, tint = Color.White)
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_x_close_icon),
+                    contentDescription = null,
+                    tint = Color.White
+                )
             }
         }
     }
 }
 
-// --- NOTIFICATION POPUP (REVİZE EDİLDİ: ÇOK DAHA KÜÇÜK VE KOMPAKT) ---
+// --- NOTIFICATION POPUP (DÜZELTİLDİ) ---
 @Composable
 fun NotificationPopup(onDismiss: () -> Unit) {
     // State'ler
@@ -348,59 +425,87 @@ fun NotificationPopup(onDismiss: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .width(280.dp) // GÖRSELDEKİ GİBİ DARALTILDI (Eskisi 320dp idi)
+                .width(290.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(PopupBackground)
+                .background(Color(0xFF5A5A5A))
                 .clickable(enabled = false) {}
-                .padding(16.dp) // PADDING AZALTILDI (Daha sıkışık görünüm)
+                .padding(20.dp)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // BAŞLIK ve X BUTONU
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Notification Preferences",
-                        color = Color.White,
-                        fontSize = 15.sp, // FONT KÜÇÜLTÜLDÜ
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_x_close_icon),
-                        contentDescription = "Close",
-                        tint = Color.White,
+                Box(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(PopupBackground)
+                        .padding(4.dp)
+                ) {
+                    Column(
                         modifier = Modifier
-                            .size(20.dp) // İKON KÜÇÜLTÜLDÜ
-                            .align(Alignment.CenterEnd)
-                            .clickable { onDismiss() }
-                    )
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // BAŞLIK ve X BUTONU
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Notification Preferences",
+                                color = Color.White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = poppinsFontFamily,
+                                // HATA BURADAYDI: Box içinde CenterHorizontally kullanılmaz.
+                                // DÜZELTME: Alignment.Center yapıldı.
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_x_close_icon),
+                                contentDescription = "Close",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .align(Alignment.CenterEnd)
+                                    .clickable { onDismiss() }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(15.dp))
+
+                        // --- SECTIONS ---
+                        SectionHeader(text = "TRANSFERS")
+                        NotificationSwitchRow(text = "Upload Completed", checked = tUpload) {
+                            tUpload = it
+                        }
+                        NotificationSwitchRow(text = "Download Completed", checked = tDownload) {
+                            tDownload = it
+                        }
+                        NotificationSwitchRow(text = "New File Received", checked = tNewFile) {
+                            tNewFile = it
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        SectionHeader(text = "GROUPS")
+                        NotificationSwitchRow(text = "Upload Completed", checked = gUpload) {
+                            gUpload = it
+                        }
+                        NotificationSwitchRow(text = "Download Completed", checked = gDownload) {
+                            gDownload = it
+                        }
+                        NotificationSwitchRow(text = "New File Received", checked = gNewFile) {
+                            gNewFile = it
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        SectionHeader(text = "GENERAL")
+                        NotificationSwitchRow(text = "App Updates", checked = appUpdates) {
+                            appUpdates = it
+                        }
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(15.dp)) // Boşluk azaltıldı
-
-                // --- SECTIONS ---
-                SectionHeader(text = "TRANSFERS")
-                NotificationSwitchRow(text = "Upload Completed", checked = tUpload) { tUpload = it }
-                NotificationSwitchRow(text = "Download Completed", checked = tDownload) { tDownload = it }
-                NotificationSwitchRow(text = "New File Received", checked = tNewFile) { tNewFile = it }
-
-                Spacer(modifier = Modifier.height(10.dp)) // Boşluk azaltıldı
-
-                SectionHeader(text = "GROUPS")
-                NotificationSwitchRow(text = "Upload Completed", checked = gUpload) { gUpload = it }
-                NotificationSwitchRow(text = "Download Completed", checked = gDownload) { gDownload = it }
-                NotificationSwitchRow(text = "New File Received", checked = gNewFile) { gNewFile = it }
-
-                Spacer(modifier = Modifier.height(10.dp)) // Boşluk azaltıldı
-
-                SectionHeader(text = "GENERAL")
-                NotificationSwitchRow(text = "App Updates", checked = appUpdates) { appUpdates = it }
-
-                // Alt kısımda gereksiz boşluk bırakmadık
             }
         }
     }
@@ -426,11 +531,11 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .width(320.dp)
+                .width(290.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(PopupBackground)
+                .background(Color(0xFF5A5A5A))
                 .clickable(enabled = false) {}
-                .padding(24.dp)
+                .padding(20.dp)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -477,11 +582,16 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
                     onClick = {
                         if (oldPassword.isNotEmpty() && newPassword.isNotEmpty() && confirmPassword.isNotEmpty()) {
                             if (newPassword != confirmPassword) {
-                                Toast.makeText(context, "Yeni şifreler eşleşmiyor.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Yeni şifreler eşleşmiyor.", Toast.LENGTH_SHORT)
+                                    .show()
                                 return@Button
                             }
                             if (newPassword.length < 6) {
-                                Toast.makeText(context, "Şifre en az 6 karakter olmalı.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Şifre en az 6 karakter olmalı.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 return@Button
                             }
 
@@ -490,27 +600,41 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
                             val userEmail = user?.email
 
                             if (user != null && userEmail != null) {
-                                val credential = EmailAuthProvider.getCredential(userEmail, oldPassword)
+                                val credential =
+                                    EmailAuthProvider.getCredential(userEmail, oldPassword)
                                 user.reauthenticate(credential)
                                     .addOnSuccessListener {
                                         user.updatePassword(newPassword)
                                             .addOnSuccessListener {
                                                 isLoading = false
-                                                Toast.makeText(context, "Şifreniz başarıyla değiştirildi!", Toast.LENGTH_LONG).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    "Şifreniz başarıyla değiştirildi!",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
                                                 onDismiss()
                                             }
                                             .addOnFailureListener { e ->
                                                 isLoading = false
-                                                Toast.makeText(context, "Güncelleme Hatası: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    "Güncelleme Hatası: ${e.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                     }
                                     .addOnFailureListener {
                                         isLoading = false
-                                        Toast.makeText(context, "Mevcut şifreniz yanlış.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Mevcut şifreniz yanlış.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                             }
                         } else {
-                            Toast.makeText(context, "Lütfen tüm alanları doldurun.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Lütfen tüm alanları doldurun.", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     },
                     enabled = !isLoading,
@@ -519,9 +643,16 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     if (isLoading) {
-                        CircularProgressIndicator(color = PopupBackground, modifier = Modifier.size(20.dp))
+                        CircularProgressIndicator(
+                            color = PopupBackground,
+                            modifier = Modifier.size(20.dp)
+                        )
                     } else {
-                        Text("Change Password", color = PopupBackground, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Change Password",
+                            color = PopupBackground,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -536,12 +667,12 @@ fun SectionHeader(text: String) {
     Text(
         text = text,
         color = Color.White,
-        fontSize = 12.sp, // Header fontu küçültüldü
+        fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         textDecoration = TextDecoration.Underline,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 4.dp) // Alt boşluk azaltıldı
+            .padding(bottom = 4.dp)
     )
 }
 
@@ -561,7 +692,7 @@ fun NotificationSwitchRow(
         Text(
             text = text,
             color = Color.White,
-            fontSize = 13.sp, // Yazı fontu küçültüldü
+            fontSize = 13.sp,
             fontWeight = FontWeight.Medium
         )
         // Switch'i küçültmek için scale kullanıyoruz
