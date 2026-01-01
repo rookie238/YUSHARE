@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.yushare.navigation.HomeWithNavBar
 import com.example.yushare.screens.ForgotPasswordScreen
 import com.example.yushare.screens.LoginScreen
-import com.example.yushare.screens.PostDetailScreen // BU IMPORT ÖNEMLİ (Eğer kırmızı yanarsa aşağıyı oku)
 import com.example.yushare.screens.RegisterScreen
 import com.example.yushare.ui.theme.YUSHARETheme
 
@@ -27,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Ana navigasyon kontrolcüsü
+                    // Ana navigasyon kontrolcüsü (Login -> Home arası geçiş için)
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = "login") {
@@ -54,24 +53,13 @@ class MainActivity : ComponentActivity() {
                             ForgotPasswordScreen(navController = navController)
                         }
 
-                        // 4. HOME (Bottom Navigation Bar'ı olan ana ekran)
+                        // 4. HOME
+                        // Burası açıldığında "HomeWithNavBar" devreye girer.
+                        // Post detayları ve diğer alt sayfalar "AppNavigation" (HomeWithNavBar'ın içi) tarafından yönetilir.
+                        // O yüzden buraya ekstradan PostDetailScreen yazmana gerek yoktur.
                         composable("home") {
-                            // ÖNEMLİ NOT: HomeWithNavBar içindeki HomeScreen'den buradaki detay sayfalarına
-                            // gidebilmek için, HomeWithNavBar'ın root navController'a erişimi olması gerekebilir.
-                            // Eğer HomeWithNavBar kendi içinde ayrı bir navController oluşturuyorsa,
-                            // root navController'ı ona parametre olarak geçmen gerekebilir.
                             HomeWithNavBar()
                         }
-
-                        // --- 5. EKLENEN KISIM: POST DETAY SAYFASI ---
-                        // Yorum veya gönderiye tıklayınca buraya gelecek
-                        composable("post_detail_placeholder") {
-                            PostDetailScreen(navController = navController)
-                        }
-
-                        // --- 6. OPSİYONEL: KURS DETAY SAYFASI ---
-                        // İleride kurslara tıklayınca çökmemesi için bunu da ekleyebilirsin
-                        // composable("course_detail/{courseId}") { ... }
                     }
                 }
             }

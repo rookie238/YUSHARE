@@ -112,7 +112,7 @@ fun PostItem(post: Post, navController: NavController) {
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        navController.navigate("post_detail_placeholder")
+                        navController.navigate("post_detail/${post.id}")
                     }
             )
         }

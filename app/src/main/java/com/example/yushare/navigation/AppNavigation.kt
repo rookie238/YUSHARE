@@ -81,8 +81,15 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
         }
 
         // 4. Gönderi Detay
-        composable("post_detail_placeholder") {
-            PostDetailScreen(navController = navController)
+        composable(
+            "post_detail/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            // Linkten gelen postId'yi alıyoruz
+            val postId = backStackEntry.arguments?.getString("postId") ?: ""
+
+            // Ekranı çağırırken ID ve ViewModel'i gönderiyoruz
+            PostDetailScreen(navController = navController, postId = postId, viewModel = sharedViewModel)
         }
 
         // Diğer Alt Menü Ekranları
