@@ -36,6 +36,7 @@ import com.example.yushare.viewmodel.SharedViewModel
 import com.example.yushare.viewmodel.ChatViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.yushare.screens.ForgotPasswordScreen
+import com.example.yushare.screens.NotificationsScreen
 
 
 @Composable
@@ -58,6 +59,8 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
     // 1. DÜZELTME: ChatViewModel'i burada oluşturuyoruz.
     // Böylece sayfalar arası gezerken mesajlar silinmez.
     val chatViewModel: ChatViewModel = viewModel()
+
+    val viewModel: com.example.yushare.viewmodel.SharedViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     NavHost(navController = navController, startDestination = "home") {
 
@@ -137,6 +140,13 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
                 viewModel = sharedViewModel,
                 navController = navController
             )
+        }
+
+        // --- AppNavigation.kt içine eklenecek ---
+
+        composable("notifications") {
+            // Birazdan oluşturacağımız ekranı buraya bağlıyoruz
+            NotificationsScreen(navController = navController, viewModel = viewModel)
         }
     }
 }

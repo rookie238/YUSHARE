@@ -10,12 +10,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,6 +30,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.yushare.components.PostItem
 import com.example.yushare.viewmodel.SharedViewModel
+import androidx.compose.foundation.layout.Box // Box için gerekli
+import androidx.compose.foundation.layout.fillMaxWidth
+
+
 
 @Composable
 fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
@@ -56,26 +62,31 @@ fun HomeScreen(viewModel: SharedViewModel, navController: NavHostController) {
                     .padding(top = 24.dp, bottom = 10.dp)
                     .padding(horizontal = 16.dp)
             ) {
-                // A) Ortalanmış Başlık
-                Row(
-                    modifier = Modifier.align(Alignment.Center),
-                    verticalAlignment = Alignment.CenterVertically
+                // 1. ORTALANMIŞ BAŞLIK
+                // Row SİLİNDİ. Text doğrudan Box içinde.
+                Text(
+                    text = "For You",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = HeaderTextColor,
+                    modifier = Modifier.align(Alignment.Center) // Box olduğu için çalışır
+                )
+
+                // 2. ZİL İKONU (SAĞA YASLI)
+                // Row SİLİNDİ. IconButton doğrudan Box içinde.
+                IconButton(
+                    onClick = {
+                        navController.navigate("notifications")
+                    },
+                    modifier = Modifier.align(Alignment.CenterEnd) // Box olduğu için çalışır
                 ) {
-                    Text(
-                        text = "For You",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = HeaderTextColor
-                    )
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = null,
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Notifications",
                         tint = HeaderTextColor,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(28.dp)
                     )
                 }
-
-
             }
 
             Spacer(modifier = Modifier.height(20.dp))
