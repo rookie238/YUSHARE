@@ -3,6 +3,7 @@ package com.example.yushare.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.yushare.model.Comment // Import ettiğinden emin ol
 import com.example.yushare.viewmodel.SharedViewModel
 
 @Composable
@@ -29,16 +31,20 @@ fun PostDetailScreen(
     postId: String,
     viewModel: SharedViewModel
 ) {
-    // 1. ViewModel'deki listeden ID'si eşleşen postu buluyoruz
-    // remember key olarak postId verdik, eğer id değişirse tekrar bulur.
+    // 1. Post verisini bul
     val post = remember(postId, viewModel.postsList) {
         viewModel.postsList.find { it.id == postId }
     }
 
-    // Uygulamanın ana rengi
-    val AppColor = Color(0xFF2B0B5E)
+    // 2. Yorumları Çek (Sayfa açılınca veya postId değişince çalışır)
+    LaunchedEffect(postId) {
+        viewModel.fetchComments(postId)
+    }
 
-    // Yorum metnini tutan değişken
+    // Yorum Listesini ViewModel'den alıyoruz
+    val comments = viewModel.commentsList
+
+    val AppColor = Color(0xFF2B0B5E)
     var commentText by remember { mutableStateOf("") }
 
     Column(
@@ -48,7 +54,7 @@ fun PostDetailScreen(
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
 
-        // --- 1. ÜST KISIM (Header) ---
+        // --- HEADER ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,29 +78,20 @@ fun PostDetailScreen(
 
         HorizontalDivider(color = Color(0xFFEEEEEE))
 
-        // Eğer post bulunamazsa (yüklenirken veya hata olursa)
         if (post == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Gönderi bulunamadı veya silinmiş.")
+                Text("Gönderi bulunamadı.")
             }
         } else {
-            // Post bulunduysa içeriği göster
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-
-                // A) GÖNDERİNİN KENDİSİ
+                // A) GÖNDERİ DETAYI
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        // Profil Kısmı
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Profil resmi placeholder (Gerçek resim varsa AsyncImage kullanılabilir)
                             Box(
                                 modifier = Modifier
                                     .size(40.dp)
@@ -111,41 +108,25 @@ fun PostDetailScreen(
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
                                 Text(text = post.username, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                                // Modelinde timestamp yoksa courseCode gösterebiliriz
                                 Text(text = post.courseCode, color = Color.Gray, fontSize = 12.sp)
                             }
                         }
-
                         Spacer(modifier = Modifier.height(12.dp))
-
-                        // Açıklama
                         if (post.description.isNotEmpty()) {
-                            Text(text = post.description, fontSize = 15.sp, lineHeight = 20.sp)
+                            Text(text = post.description, fontSize = 15.sp)
                             Spacer(modifier = Modifier.height(12.dp))
                         }
-
-                        // Resim (Varsa)
                         if (post.fileUrl.isNotEmpty()) {
                             AsyncImage(
                                 model = post.fileUrl,
-                                contentDescription = "Post Image",
+                                contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(300.dp)
+                                    .height(250.dp)
                                     .clip(RoundedCornerShape(12.dp)),
                                 contentScale = ContentScale.Crop
                             )
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Beğeni (Statik)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.FavoriteBorder, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Beğeniler", color = Color.Gray, fontSize = 14.sp)
-                        }
-
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(color = Color(0xFFEEEEEE))
                     }
@@ -154,39 +135,40 @@ fun PostDetailScreen(
                 // B) YORUMLAR BAŞLIĞI
                 item {
                     Text(
-                        text = "Yorumlar",
+                        text = "Yorumlar (${comments.size})",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
                     )
                 }
 
-                // C) YORUM LİSTESİ (Burada Post'a ait yorumları çekmek gerekecek)
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(40.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Henüz yorum yok.\nİlk yorumu sen yaz!",
-                            color = Color.Gray,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
+                // C) DİNAMİK YORUM LİSTESİ
+                if (comments.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Henüz yorum yok. İlk yorumu sen yaz!", color = Color.Gray)
+                        }
+                    }
+                } else {
+                    items(comments) { comment ->
+                        CommentItem(comment)
                     }
                 }
             }
 
-            // --- 3. ALT KISIM (Yorum Yazma Alanı) ---
+            // --- YORUM YAZMA ALANI ---
             Column {
                 HorizontalDivider(color = Color(0xFFEEEEEE))
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp)
-                        .imePadding(), // Klavye açılınca yukarı kayması için
+                        .imePadding(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
@@ -205,29 +187,67 @@ fun PostDetailScreen(
                         ),
                         maxLines = 3
                     )
-
                     Spacer(modifier = Modifier.width(8.dp))
-
                     IconButton(
                         onClick = {
                             if (commentText.isNotBlank()) {
-                                // TODO: Yorumu veritabanına kaydetme işlemi buraya gelecek
-                                println("Yorum gönderildi: $commentText (Post ID: $postId)")
-                                commentText = ""
+                                // ViewModel üzerinden yorumu gönder
+                                viewModel.sendComment(postId, commentText)
+                                commentText = "" // Kutuyu temizle
                             }
                         },
                         modifier = Modifier
                             .size(48.dp)
                             .background(AppColor, CircleShape)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Gönder",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.Send, contentDescription = "Gönder", tint = Color.White)
                     }
                 }
             }
+        }
+    }
+}
+
+// --- TEKİL YORUM GÖRÜNÜMÜ ---
+@Composable
+fun CommentItem(comment: Comment) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        // Yorum Yapanın Profil Resmi (Baş harf)
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFE0E0E0)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = comment.username.take(1).uppercase(),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.DarkGray
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column {
+            // Kullanıcı Adı
+            Text(
+                text = comment.username,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
+            // Yorum Metni
+            Text(
+                text = comment.text,
+                fontSize = 14.sp,
+                color = Color(0xFF333333)
+            )
         }
     }
 }

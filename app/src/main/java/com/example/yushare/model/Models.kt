@@ -45,8 +45,9 @@ data class NotificationItem(
 
 data class Comment(
     val id: String = "",
+    val postId: String = "",
     val userId: String = "",
     val username: String = "",
     val text: String = "",
-    val timestamp: Long = 0
+    val timestamp: Long = System.currentTimeMillis() // Sıralama için zaman damgası
 )

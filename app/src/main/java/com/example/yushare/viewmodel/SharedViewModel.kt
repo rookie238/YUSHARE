@@ -11,14 +11,12 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.yushare.model.Comment
 import com.example.yushare.model.Course
-import com.example.yushare.model.NotificationItem // Models.kt'ye eklediğinden emin ol
+import com.example.yushare.model.NotificationItem
 import com.example.yushare.model.Post
 import com.example.yushare.model.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-
-
 
 class SharedViewModel : ViewModel() {
 
@@ -57,7 +55,7 @@ class SharedViewModel : ViewModel() {
             fetchCourses()
             fetchPosts()
             fetchUserProfile()
-            listenToNotifications() // <--- YENİ: Bildirimleri dinle
+            listenToNotifications()
         } catch (e: Exception) { }
     }
 
@@ -148,7 +146,7 @@ class SharedViewModel : ViewModel() {
                 for (document in result) {
                     tempPosts.add(mapDocumentToPost(document))
                 }
-                selectedCoursePosts.addAll(tempPosts.sortedByDescending { it.id }) // ID'ye göre sırala (veya timestamp)
+                selectedCoursePosts.addAll(tempPosts.sortedByDescending { it.id })
             }
     }
 
@@ -157,7 +155,7 @@ class SharedViewModel : ViewModel() {
         val url = document.getString("imageUrl") ?: document.getString("fileUrl") ?: ""
         return Post(
             id = document.id,
-            ownerId = document.getString("ownerId") ?: "", // <--- YENİ: Sahip bilgisini çek
+            ownerId = document.getString("ownerId") ?: "",
             username = document.getString("username") ?: "@anonim",
             courseCode = document.getString("courseCode") ?: "",
             fileUrl = url,
@@ -187,16 +185,15 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    // --- YÜKLEME İŞLEMİ (GÜNCELLENDİ: ownerId EKLENDİ) ---
+    // --- YÜKLEME İŞLEMİ ---
     fun uploadPost(fileUri: Uri?, courseCode: String, description: String, context: Context, onSuccess: () -> Unit) {
         isUploading.value = true
         val currentUsername = getCurrentUsername()
-        val currentUserId = auth.currentUser?.uid ?: "" // <--- YENİ
+        val currentUserId = auth.currentUser?.uid ?: ""
 
-        // Firestore'a kaydedilecek veri haritası (Helper fonksiyonu çağıracak)
         fun createPostMap(downloadUrl: String, fileType: String): HashMap<String, Any> {
             return hashMapOf(
-                "ownerId" to currentUserId, // <--- YENİ: Bu çok önemli, bildirim için lazım
+                "ownerId" to currentUserId,
                 "username" to currentUsername,
                 "courseCode" to courseCode,
                 "fileUrl" to downloadUrl,
@@ -206,14 +203,12 @@ class SharedViewModel : ViewModel() {
             )
         }
 
-        // DURUM 1: Sadece Yazı Var
         if (fileUri == null) {
             val postMap = createPostMap("", "text")
             saveToFirestore(postMap, context, onSuccess)
             return
         }
 
-        // DURUM 2: Dosya Var -> Cloudinary
         val fileType = getFileType(context, fileUri)
 
         MediaManager.get().upload(fileUri)
@@ -252,40 +247,32 @@ class SharedViewModel : ViewModel() {
     }
 
     // ==========================================
-    // --- YENİ BÖLÜM: BİLDİRİM SİSTEMİ ---
+    // --- BİLDİRİM SİSTEMİ ---
     // ==========================================
 
-    // 1. Bildirim Gönder (HomeScreen'de Kalp butonuna basınca çağır)
     fun sendLikeNotification(post: Post) {
         val currentUser = auth.currentUser ?: return
-
-        // Kullanıcı kendi gönderisini beğendiyse bildirim gitmesin
         if (post.ownerId == currentUser.uid) return
-        if (post.ownerId.isEmpty()) return // Eski gönderilerin ownerId'si olmayabilir
+        if (post.ownerId.isEmpty()) return
 
         val notificationData = hashMapOf(
-            "toUserId" to post.ownerId,             // Kime? (Post sahibi)
-            "fromUserName" to getCurrentUsername(), // Kimden? (Ben)
+            "toUserId" to post.ownerId,
+            "fromUserName" to getCurrentUsername(),
             "actionType" to "LIKE",
             "message" to "liked your post",
             "timestamp" to System.currentTimeMillis(),
             "isRead" to false
         )
-
         db.collection("notifications").add(notificationData)
     }
 
-    // 2. Bildirimleri Dinle (Real-time Listener)
     private fun listenToNotifications() {
         val myUserId = auth.currentUser?.uid ?: return
-
-        // "notifications" koleksiyonunda "toUserId" benim ID'm olanları dinle
         db.collection("notifications")
             .whereEqualTo("toUserId", myUserId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
                 if (error != null) return@addSnapshotListener
-
                 if (value != null) {
                     notificationsList.clear()
                     for (doc in value) {
@@ -305,47 +292,61 @@ class SharedViewModel : ViewModel() {
             }
     }
 
-    // Bir gönderinin yorumlarını çek
+    // ==========================================
+    // --- YORUM SİSTEMİ (GÜNCELLENDİ) ---
+    // ==========================================
+
+    // 1. Yorumları "comments" koleksiyonundan çek (postId'ye göre filtrele)
     fun fetchComments(postId: String) {
-        commentsList.clear() // Önceki listenin verilerini temizle
-        db.collection("uploads").document(postId).collection("comments")
-            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.ASCENDING)
+        commentsList.clear()
+
+        // "comments" ana koleksiyonunda postId'si eşleşenleri bul
+        db.collection("comments")
+            .whereEqualTo("postId", postId)
             .addSnapshotListener { value, error ->
                 if (error != null) return@addSnapshotListener
+
                 if (value != null) {
-                    commentsList.clear()
-                    for (doc in value) {
-                        commentsList.add(Comment(
-                            id = doc.id,
-                            userId = doc.getString("userId") ?: "",
-                            username = doc.getString("username") ?: "Anonim",
-                            text = doc.getString("text") ?: "",
-                            timestamp = doc.getLong("timestamp") ?: 0
-                        ))
+                    val tempComments = mutableListOf<Comment>()
+                    for (document in value) {
+                        // Veriyi Comment sınıfına dönüştür
+                        val comment = document.toObject(Comment::class.java)
+                        // ID'yi manuel set et (Firebase ID'si)
+                        tempComments.add(comment.copy(id = document.id))
                     }
+                    // Client tarafında sıralama yap (Firebase Index hatası almamak için)
+                    commentsList.clear()
+                    commentsList.addAll(tempComments.sortedBy { it.timestamp })
                 }
             }
     }
 
-    // Yeni yorum gönder
+    // 2. Yorum Gönder ("comments" ana koleksiyonuna ekle)
     fun sendComment(postId: String, commentText: String) {
         val currentUser = auth.currentUser ?: return
-        val currentUsername = getCurrentUsername()
+        val currentUsername = getCurrentUsername() // Yukarıdaki helper fonksiyonu kullan
 
-        val commentMap = hashMapOf(
-            "userId" to currentUser.uid,
-            "username" to currentUsername,
-            "text" to commentText,
-            "timestamp" to System.currentTimeMillis()
+        // Yeni Comment nesnesi oluştur
+        val newComment = Comment(
+            postId = postId,
+            userId = currentUser.uid,
+            username = currentUsername,
+            text = commentText,
+            timestamp = System.currentTimeMillis()
         )
 
-        db.collection("uploads").document(postId).collection("comments")
-            .add(commentMap)
+        // Veritabanına ekle
+        db.collection("comments").add(newComment)
+            .addOnSuccessListener {
+                println("Yorum başarıyla gönderildi.")
+            }
+            .addOnFailureListener { e ->
+                println("Yorum hatası: ${e.localizedMessage}")
+            }
     }
 
-    // ID'ye göre gönderiyi bul (Listeden çeker, tekrar internet harcamaz)
+    // ID'ye göre gönderiyi bul
     fun getPostById(postId: String): Post? {
         return postsList.find { it.id == postId }
     }
-
 }
