@@ -146,7 +146,9 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
 
         composable("notifications") {
             // Birazdan oluşturacağımız ekranı buraya bağlıyoruz
-            NotificationsScreen(navController = navController, viewModel = viewModel)
+            NotificationsScreen(
+                navController = navController
+            )
         }
     }
 }

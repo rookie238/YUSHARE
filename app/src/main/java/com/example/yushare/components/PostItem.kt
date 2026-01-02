@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder // İçi boş kalp ikonu için gerekli
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,17 +25,21 @@ import coil.compose.AsyncImage
 import com.example.yushare.model.Post
 
 @Composable
-fun PostItem(post: Post, navController: NavController) {
+fun PostItem(
+    post: Post,
+    navController: NavController,
+    // İleride veritabanına kaydetmek isterseniz bu fonksiyonu kullanacaksınız:
+    onLikeClick: ((Boolean) -> Unit)? = null
+) {
 
     val imageUrl: String = post.fileUrl ?: ""
     val content: String = post.description ?: ""
     val userName: String = post.username ?: "Anonim"
     val timeAgo: String = "1s önce"
 
-    // --- BEĞENİ DURUMU ---
-    // false = Beğenilmemiş (İçi boş)
-    // true  = Beğenilmiş (Kırmızı ve dolu)
-    var isLiked by remember { mutableStateOf(false) }
+    // --- DÜZELTME BURADA ---
+    // Durumu 'false' yerine doğrudan post.isLiked verisinden alıyoruz.
+    var isLiked by remember { mutableStateOf(post.isLiked) }
 
     Column(
         modifier = Modifier
@@ -86,21 +90,22 @@ fun PostItem(post: Post, navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // 1. BEĞENİ BUTONU (GÜNCELLENDİ)
+            // 1. BEĞENİ BUTONU
             Icon(
-                // Eğer beğenildiyse DOLU KALP, değilse BOŞ KALP göster
                 imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-
                 contentDescription = "Like",
-
-                // Eğer beğenildiyse KIRMIZI, değilse GRİ yap
-                // (Not: Beyaz yaparsak arka plan da beyaz olduğu için ikon kaybolur, o yüzden gri/siyah çerçeve kullanıyoruz)
                 tint = if (isLiked) Color.Red else Color.Gray,
-
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        isLiked = !isLiked // Durumu tersine çevir
+                        // 1. UI durumunu tersine çevir
+                        isLiked = !isLiked
+
+                        // 2. Veri modelini güncelle (Bu sayede scroll yapınca unutmaz)
+                        post.isLiked = isLiked
+
+                        // 3. (Opsiyonel) ViewModel veya API'ye haber ver
+                        onLikeClick?.invoke(isLiked)
                     }
             )
 
@@ -112,7 +117,9 @@ fun PostItem(post: Post, navController: NavController) {
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        navController.navigate("post_detail/${post.id}")
+                        // post.id'nin null olmadığından emin olun veya safe call yapın
+                        val postId = post.id ?: "0"
+                        navController.navigate("post_detail/$postId")
                     }
             )
         }

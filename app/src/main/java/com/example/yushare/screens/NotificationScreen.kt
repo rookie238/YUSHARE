@@ -28,8 +28,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.example.yushare.model.NotificationItem
-import com.example.yushare.viewmodel.SharedViewModel
+
+// --- Model Sınıfı (ViewModel olmadığı için buraya ekledim) ---
+data class NotificationItem(
+    val fromUserName: String,
+    val message: String,
+    val actionType: String, // "LIKE", "REPLY", "MESSAGE" vb.
+    val timestamp: Long
+)
 
 // --- Renk Paleti ---
 val BgBeige = Color(0xFFF1F0EA)
@@ -41,19 +47,73 @@ val VcdOrange = Color(0xFFFF9800)
 
 @Composable
 fun NotificationsScreen(
-    navController: NavController,
-    viewModel: SharedViewModel
+    navController: NavController
+    // ViewModel parametresi kaldırıldı
 ) {
-    // ViewModel'den veriyi alıp Content'e paslıyoruz
-    val notifications = viewModel.notificationsList
+    // --- SABİT VERİLER (MOCK DATA) ---
+    val now = System.currentTimeMillis()
+    val oneHour = 3600000L
+    val oneDay = 86400000L
 
+    val notifications = listOf(
+        NotificationItem(
+            fromUserName = "ardademir",
+            message = "replied to your post",
+            actionType = "REPLY",
+            timestamp = now - oneHour
+        ),
+        NotificationItem(
+            fromUserName = "ardademir",
+            message = "liked your post",
+            actionType = "LIKE",
+            timestamp = now - oneHour
+        ),
+        NotificationItem(
+            fromUserName = "serramete",
+            message = "replied to your post",
+            actionType = "REPLY",
+            timestamp = now - (oneHour * 2)
+        ),
+        NotificationItem(
+            fromUserName = "serramete",
+            message = "liked your post",
+            actionType = "LIKE",
+            timestamp = now - (oneHour * 2)
+        ),
+        NotificationItem(
+            fromUserName = "elifmansur",
+            message = "liked your post",
+            actionType = "LIKE",
+            timestamp = now - (oneHour * 5)
+        ),
+        NotificationItem(
+            fromUserName = "gokhanozsen",
+            message = "liked your post",
+            actionType = "LIKE",
+            timestamp = now - (oneHour * 7)
+        ),
+        NotificationItem(
+            fromUserName = "VCD 421",
+            message = "you have a new message",
+            actionType = "MESSAGE",
+            timestamp = now - (oneHour * 7)
+        ),
+        NotificationItem(
+            fromUserName = "VCD 471",
+            message = "you have a new message",
+            actionType = "MESSAGE",
+            timestamp = now - oneDay
+        )
+    )
+
+    // İçeriği çiziyoruz
     NotificationsContent(
         notifications = notifications,
         onBackClick = { navController.popBackStack() }
     )
 }
 
-// --- UI Çizen Fonksiyon (Preview için ayrıldı) ---
+// --- UI Çizen Fonksiyon ---
 @Composable
 fun NotificationsContent(
     notifications: List<NotificationItem>,
@@ -97,6 +157,7 @@ fun NotificationsContent(
                 color = HeaderBlue
             )
 
+            // Bildirim Sayısı Rozeti
             Box(
                 modifier = Modifier
                     .padding(start = 4.dp)
@@ -126,7 +187,7 @@ fun NotificationsContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 itemsIndexed(notifications) { index, item ->
-                    // İlk 4 öğeyi görseldeki gibi turuncu kart yapıyoruz
+                    // İlk 4 öğeyi turuncu (CardOrange), diğerlerini şeffaf yap
                     val isHighlighted = index < 4
                     NotificationRow(item, isHighlighted)
                 }
@@ -147,8 +208,9 @@ fun NotificationRow(item: NotificationItem, isHighlighted: Boolean) {
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // --- Profil ---
+        // --- Profil Alanı ---
         Box(modifier = Modifier.size(56.dp)) {
+            // "VCD" ile başlayan kullanıcılar için özel ikon
             if (item.fromUserName.startsWith("VCD")) {
                 Box(
                     modifier = Modifier
@@ -167,8 +229,7 @@ fun NotificationRow(item: NotificationItem, isHighlighted: Boolean) {
                     )
                 }
             } else {
-                // Önizlemede (Preview) AsyncImage bazen boş görünür, bu normaldir.
-                // Gerçek cihazda çalışır.
+                // Diğer kullanıcılar için Avatar
                 AsyncImage(
                     model = "https://i.pravatar.cc/150?u=${item.fromUserName}",
                     contentDescription = null,
@@ -180,6 +241,7 @@ fun NotificationRow(item: NotificationItem, isHighlighted: Boolean) {
                 )
             }
 
+            // Beğeni (Like) ikonu varsa sağ alta ekle
             if (item.actionType == "LIKE") {
                 Box(
                     modifier = Modifier
@@ -198,7 +260,7 @@ fun NotificationRow(item: NotificationItem, isHighlighted: Boolean) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // --- Metin ---
+        // --- Metin Alanı ---
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = buildAnnotatedString {
@@ -222,6 +284,7 @@ fun NotificationRow(item: NotificationItem, isHighlighted: Boolean) {
     }
 }
 
+// Zaman hesaplama fonksiyonu
 fun getTimeAgo(timestamp: Long): String {
     val now = System.currentTimeMillis()
     val diff = now - timestamp
@@ -235,75 +298,9 @@ fun getTimeAgo(timestamp: Long): String {
     }
 }
 
-// ---------------------------------------------------------
-// --- PREVIEW BÖLÜMÜ (Android Studio'da görmek için) ---
-// ---------------------------------------------------------
-
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun NotificationsScreenPreview() {
-    // Şimdiki zamanı alıp sahte zaman farkları yaratıyoruz
-    val now = System.currentTimeMillis()
-    val oneHour = 3600000L
-    val twoHours = 7200000L
-    val fiveHours = 18000000L
-    val oneDay = 86400000L
-
-    // Görseldeki gibi sahte veriler
-    val mockData = listOf(
-        NotificationItem(
-            fromUserName = "ardademir",
-            message = "replied to your post",
-            actionType = "REPLY",
-            timestamp = now - oneHour
-        ),
-        NotificationItem(
-            fromUserName = "ardademir",
-            message = "liked your post",
-            actionType = "LIKE",
-            timestamp = now - oneHour
-        ),
-        NotificationItem(
-            fromUserName = "serramete",
-            message = "replied to your post",
-            actionType = "REPLY",
-            timestamp = now - twoHours
-        ),
-        NotificationItem(
-            fromUserName = "serramete",
-            message = "liked your post",
-            actionType = "LIKE",
-            timestamp = now - twoHours
-        ),
-        NotificationItem(
-            fromUserName = "elifmansur",
-            message = "liked your post",
-            actionType = "LIKE",
-            timestamp = now - fiveHours
-        ),
-        NotificationItem(
-            fromUserName = "gokhanozsen",
-            message = "liked your post",
-            actionType = "LIKE",
-            timestamp = now - (oneHour * 7)
-        ),
-        NotificationItem(
-            fromUserName = "VCD 421",
-            message = "you have a new message",
-            actionType = "MESSAGE",
-            timestamp = now - (oneHour * 7)
-        ),
-        NotificationItem(
-            fromUserName = "VCD 471",
-            message = "you have a new message",
-            actionType = "MESSAGE",
-            timestamp = now - oneDay
-        )
-    )
-
-    // Sadece UI kısmını (Content) çağırıyoruz
-    NotificationsContent(
-        notifications = mockData,
-        onBackClick = {}
-    )
+    val navController = rememberNavController()
+    NotificationsScreen(navController = navController)
 }

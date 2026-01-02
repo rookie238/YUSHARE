@@ -19,7 +19,8 @@ data class Post(
     val courseCode: String = "", // <-- BURASI String OLMALI
     val fileUrl: String = "",
     val description: String = "",
-    val fileType: String = "text"
+    val fileType: String = "text",
+    var isLiked: Boolean = false
 )
 
 data class UserProfile(
