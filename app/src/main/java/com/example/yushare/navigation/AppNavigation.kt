@@ -37,6 +37,7 @@ import com.example.yushare.viewmodel.ChatViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.yushare.screens.ForgotPasswordScreen
 import com.example.yushare.screens.NotificationsScreen
+import com.example.yushare.screens.CreateGroupScreen
 
 
 @Composable
@@ -105,12 +106,30 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
         composable("groups") {
             GroupsScreen(
                 onNavigateToCreateGroup = {
-                    // Create Group rotanız varsa buraya yazın
-                    println("Create Group butonuna basıldı")
+                    // ESKİSİ: println("Create Group butonuna basıldı")
+                    // YENİSİ: Artık yeni ekrana yönlendiriyoruz
+                    navController.navigate("create_group")
                 },
                 onNavigateToChat = { groupName ->
-                    // 2. DÜZELTME: Println yerine gerçekten yönlendiriyoruz
                     navController.navigate("chat/$groupName")
+                }
+            )
+        }
+
+        composable("create_group") {
+            CreateGroupScreen(
+                onNavigateBack = {
+                    // Sol üstteki geri okuna basınca çalışır
+                    navController.popBackStack()
+                },
+                onNavigateToMessaging = {
+                    // "Next" butonuna basınca ne olsun?
+                    // Şimdilik sadece geri dönsün veya sohbet ekranına gitsin diyebiliriz.
+                    // Örnek: "New Group" adında bir sohbete gitsin:
+                    navController.navigate("chat/New Group") {
+                        // Geri tuşuna basınca create ekranına tekrar dönmesin diye:
+                        popUpTo("groups")
+                    }
                 }
             )
         }

@@ -58,7 +58,7 @@ fun GroupsScreen(
                 // --- Yatay Liste (Horizontal Scroll) ---
                 item {
                     LazyRow(
-                        contentPadding = PaddingValues(horizontal = 24.dp),
+                        contentPadding = PaddingValues(horizontal =25.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         item {
@@ -172,7 +172,7 @@ fun BigGroupCard(title: String, code: String, tag: String, color: Color,onClick:
     Card(
         modifier = Modifier
             .width(280.dp)
-            .height(260.dp)
+            .height(200.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.cardColors(containerColor = color)
