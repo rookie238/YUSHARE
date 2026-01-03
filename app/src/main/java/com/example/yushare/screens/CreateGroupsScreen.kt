@@ -35,47 +35,86 @@ import androidx.compose.ui.unit.sp
 import com.example.yushare.R
 import com.example.yushare.ui.theme.*
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.UUID
 
-// Firestore'daki yapına uygun Kullanıcı Modeli
+// --- DATA MODELLERİ ---
+
+// Firestore'a kaydedilecek Grup Modeli
+data class GroupData(
+    val id: String = "",
+    val name: String = "",
+    val memberIds: List<String> = emptyList(),
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+// Kullanıcı Arama Sonuçları için Model
 data class GroupUser(
     val uid: String = "",
     val name: String = "",
-    val id: String = "",       // Öğrenci ID'si (Firestore'daki 'id' alanı)
-    val department: String = "" // Bölüm bilgisi
+    val id: String = "",       // Öğrenci ID'si
+    val department: String = ""
 )
+
+// --- ANA EKRAN ---
 
 @Composable
 fun CreateGroupScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToMessaging: () -> Unit
+    // Grup oluşturulduğunda ID ve İsim ile Chat ekranına gitmek için:
+    onNavigateToMessaging: (String, String) -> Unit
 ) {
-    // --- STATE TANIMLARI ---
+    // State Tanımları
     var groupName by remember { mutableStateOf("") }
     var studentIdQuery by remember { mutableStateOf("") }
 
-    // Firestore veritabanı örneği
     val db = FirebaseFirestore.getInstance()
 
-    // Arama sonuçlarını ve seçilenleri tutacak listeler
+    // Listeler
     var searchResults by remember { mutableStateOf<List<GroupUser>>(emptyList()) }
     val selectedMembers = remember { mutableStateListOf<GroupUser>() }
+
+    // Yükleniyor durumu
     var isLoading by remember { mutableStateOf(false) }
 
-    // --- FIRESTORE ARAMA MANTIĞI ---
-    // studentIdQuery her değiştiğinde bu blok çalışır
-    LaunchedEffect(studentIdQuery) {
-        if (studentIdQuery.length >= 3) { // En az 3 karakter yazılınca aramaya başla
-            isLoading = true
+    // --- GRUP OLUŞTURMA İŞLEMİ ---
+    fun createGroupAndNavigate() {
+        if (groupName.isBlank()) return // İsim boşsa işlem yapma
 
-            // Firestore'da 'id' alanı yazılan değerle başlayanları bul (Prefix Search)
-            // Örn: '202' yazınca '2020...', '2021...' hepsi gelir.
+        isLoading = true
+        val newGroupId = UUID.randomUUID().toString() // Rastgele ID oluştur
+        val memberIds = selectedMembers.map { it.id } // Seçilenlerin ID'lerini al
+
+        val newGroup = GroupData(
+            id = newGroupId,
+            name = groupName,
+            memberIds = memberIds,
+            createdAt = System.currentTimeMillis()
+        )
+
+        // Firestore'a Kaydet
+        db.collection("Groups").document(newGroupId)
+            .set(newGroup)
+            .addOnSuccessListener {
+                isLoading = false
+                // Başarılı olursa Chat ekranına git
+                onNavigateToMessaging(newGroupId, groupName)
+            }
+            .addOnFailureListener {
+                isLoading = false
+                // Hata durumunda buraya log veya toast eklenebilir
+                println("Grup oluşturma hatası: ${it.message}")
+            }
+    }
+
+    // --- ARAMA MANTIĞI (Canlı Arama) ---
+    LaunchedEffect(studentIdQuery) {
+        if (studentIdQuery.length >= 3) { // En az 3 karakter yazılınca ara
             db.collection("Users")
                 .whereGreaterThanOrEqualTo("id", studentIdQuery)
                 .whereLessThanOrEqualTo("id", studentIdQuery + "\uf8ff")
                 .get()
                 .addOnSuccessListener { documents ->
                     val users = documents.mapNotNull { doc ->
-                        // Firestore verisini GroupUser nesnesine çeviriyoruz
                         val data = doc.data
                         GroupUser(
                             uid = doc.id,
@@ -84,24 +123,18 @@ fun CreateGroupScreen(
                             department = data["department"] as? String ?: ""
                         )
                     }.filter { user ->
-                        // Zaten seçili olanları arama sonucunda gösterme
+                        // Zaten seçili olanları sonuçlarda gösterme
                         selectedMembers.none { it.id == user.id }
                     }
                     searchResults = users
-                    isLoading = false
-                }
-                .addOnFailureListener {
-                    isLoading = false
-                    println("Hata: ${it.message}")
                 }
         } else {
             searchResults = emptyList()
-            isLoading = false
         }
     }
 
     Scaffold(
-        containerColor = YuBackground
+        containerColor = YuBackground // Tema rengi
     ) { paddingValues ->
 
         Column(
@@ -114,22 +147,32 @@ fun CreateGroupScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 2. Grup İsmi Girişi
+            // 2. İsim Giriş Alanı ve NEXT Butonu
             GroupNameInputSection(
                 groupName = groupName,
                 onNameChange = { groupName = it },
-                onNextClick = onNavigateToMessaging
+                onNextClick = { createGroupAndNavigate() }
             )
+
+            // Yükleniyor Çubuğu (Varsa göster)
+            if (isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    color = YuMediumBlue
+                )
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // 3. Alt Alan (Üye Seçimi ve Arama)
+            // 3. Alt Gri Panel (Üye Seçimi ve Arama)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1f) // Ekranın kalanını kapla
                     .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
-                    .background(Color(0xFFD9DCE3))
+                    .background(Color(0xFFD9DCE3)) // Gri-Mavi zemin
             ) {
                 Column(
                     modifier = Modifier
@@ -137,8 +180,7 @@ fun CreateGroupScreen(
                         .padding(top = 32.dp, start = 24.dp, end = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    // Başlık ve Seçilen Sayısı
+                    // Dinamik Başlık (Yazılan Grup İsmi)
                     Text(
                         text = if (groupName.isEmpty()) "New Group" else groupName,
                         color = YuMediumBlue,
@@ -146,6 +188,7 @@ fun CreateGroupScreen(
                         fontWeight = FontWeight.Bold
                     )
 
+                    // Seçilen Kişi Sayısı
                     Text(
                         text = "Selected members: ${selectedMembers.size}",
                         color = YuMediumBlue,
@@ -161,22 +204,24 @@ fun CreateGroupScreen(
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(max = 240.dp)
+                            .heightIn(max = 200.dp) // Çok uzamasını engelle
                     ) {
+                        // Seçilenleri Listele
                         items(selectedMembers) { user ->
                             MemberAvatarItem(user) {
-                                // Tıklayınca listeden çıkarma
+                                // Tıklayınca listeden sil
                                 selectedMembers.remove(user)
                             }
                         }
-                        // Boş placeholderlar (Dolu görünmesi için opsiyonel)
+
+                        // Boş yuvarlaklar (Görsel doluluk için - Opsiyonel)
                         if (selectedMembers.isEmpty()) {
                             items(3) {
                                 Box(
                                     modifier = Modifier
                                         .size(70.dp)
                                         .clip(CircleShape)
-                                        .background(Color.White.copy(alpha = 0.3f))
+                                        .background(Color.White.copy(alpha = 0.4f))
                                 )
                             }
                         }
@@ -184,17 +229,22 @@ fun CreateGroupScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Text("or", color = YuMediumBlue, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "or",
+                        color = YuMediumBlue,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // --- ID ARAMA INPUTU ---
+                    // --- ID ARAMA KUTUSU ---
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFF9FA8DA).copy(alpha = 0.4f))
+                            .background(Color(0xFF9FA8DA).copy(alpha = 0.4f)) // Input arka planı
                             .padding(horizontal = 16.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
@@ -220,21 +270,20 @@ fun CreateGroupScreen(
                     }
 
                     // --- ARAMA SONUÇLARI LİSTESİ ---
-                    if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp).size(24.dp), color = YuMediumBlue)
-                    } else if (studentIdQuery.length >= 3) {
+                    if (studentIdQuery.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(8.dp))
+
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 180.dp)
+                                .heightIn(max = 150.dp)
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(Color.White)
                         ) {
-                            if (searchResults.isEmpty()) {
+                            if (searchResults.isEmpty() && studentIdQuery.length >= 3) {
                                 item {
                                     Text(
-                                        text = "No user found with this ID",
+                                        text = "No user found",
                                         modifier = Modifier.padding(16.dp),
                                         color = Color.Gray,
                                         fontSize = 14.sp
@@ -258,37 +307,106 @@ fun CreateGroupScreen(
 }
 
 // ==========================================
-// YARDIMCI BİLEŞENLER
+// YARDIMCI BİLEŞENLER (COMPONENTS)
 // ==========================================
 
 @Composable
-fun SearchResultItem(user: GroupUser, onClick: () -> Unit) {
+fun CreateGroupHeader(onBackClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(12.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Profil resmi (Statik placeholder)
-        Image(
-            painter = painterResource(id = R.drawable.profile),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.Gray)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column {
-            Text(text = user.name, fontWeight = FontWeight.Bold, color = YuMediumBlue, fontSize = 14.sp)
+        // Geri Butonu
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFDBDEE7))
+                .clickable { onBackClick() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = YuMediumBlue)
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Başlık
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "${user.id} • ${user.department}",
-                color = Color.Gray,
-                fontSize = 12.sp,
-                maxLines = 1
+                text = "Groups",
+                color = YuMediumBlue,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = YuMediumBlue)
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Bildirim İkonu
+        Icon(
+            imageVector = Icons.Outlined.Notifications,
+            contentDescription = "Notifications",
+            tint = YuMediumBlue,
+            modifier = Modifier.size(28.dp)
+        )
+    }
+}
+
+@Composable
+fun GroupNameInputSection(
+    groupName: String,
+    onNameChange: (String) -> Unit,
+    onNextClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // İsim Girilen Gri Kutu
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFFD9DCE3))
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            if (groupName.isEmpty()) {
+                Text(
+                    text = "Group name",
+                    color = YuMediumBlue.copy(alpha = 0.4f),
+                    fontSize = 16.sp
+                )
+            }
+            BasicTextField(
+                value = groupName,
+                onValueChange = onNameChange,
+                textStyle = TextStyle(
+                    color = YuMediumBlue,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                ),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(Icons.Default.Add, contentDescription = "Add", tint = YuMediumBlue)
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // NEXT Butonu (Text Şeklinde)
+        Text(
+            text = "Next",
+            color = YuMediumBlue,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.clickable { onNextClick() }
+        )
     }
 }
 
@@ -302,6 +420,7 @@ fun MemberAvatarItem(user: GroupUser, onClick: () -> Unit) {
             modifier = Modifier.size(70.dp),
             contentAlignment = Alignment.Center
         ) {
+            // Profil Resmi (Placeholder)
             Image(
                 painter = painterResource(id = R.drawable.profile),
                 contentDescription = user.name,
@@ -313,7 +432,7 @@ fun MemberAvatarItem(user: GroupUser, onClick: () -> Unit) {
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        // İsim çok uzunsa sadece ilk kelimeyi al
+        // İsim (Sadece ilk adı)
         Text(
             text = user.name.split(" ").firstOrNull() ?: user.name,
             fontSize = 12.sp,
@@ -324,60 +443,47 @@ fun MemberAvatarItem(user: GroupUser, onClick: () -> Unit) {
 }
 
 @Composable
-fun CreateGroupHeader(onBackClick: () -> Unit) {
+fun SearchResultItem(user: GroupUser, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .clickable { onClick() }
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.profile),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(48.dp)
+                .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFDBDEE7))
-                .clickable { onBackClick() },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = YuMediumBlue)
+                .background(Color.Gray)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            Text(
+                text = user.name,
+                fontWeight = FontWeight.Bold,
+                color = YuMediumBlue,
+                fontSize = 14.sp
+            )
+            Text(
+                text = "${user.id} • ${user.department}",
+                color = Color.Gray,
+                fontSize = 12.sp
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Groups", color = YuMediumBlue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = YuMediumBlue)
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(Icons.Outlined.Notifications, contentDescription = "Notif", tint = YuMediumBlue, modifier = Modifier.size(28.dp))
+        Icon(Icons.Default.Add, contentDescription = "Add", tint = YuMediumBlue)
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun GroupNameInputSection(groupName: String, onNameChange: (String) -> Unit, onNextClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(48.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFFD9DCE3))
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            if (groupName.isEmpty()) Text("Group name", color = YuMediumBlue.copy(0.4f), fontSize = 16.sp)
-            BasicTextField(
-                value = groupName,
-                onValueChange = onNameChange,
-                textStyle = TextStyle(color = YuMediumBlue, fontSize = 16.sp, fontWeight = FontWeight.Medium),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Text("Next", color = YuMediumBlue, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { onNextClick() })
-    }
+fun CreateGroupScreenPreview() {
+    CreateGroupScreen(
+        onNavigateBack = {},
+        onNavigateToMessaging = { _, _ -> }
+    )
 }

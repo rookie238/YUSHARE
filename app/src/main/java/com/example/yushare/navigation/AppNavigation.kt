@@ -20,7 +20,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.yushare.R
-import com.example.yushare.screens.ChatScreen
 // Ekran Importları (Paket isimlerinize dikkat edin)
 import com.example.yushare.screens.CourseDetailScreen
 import com.example.yushare.screens.CoursesScreen
@@ -33,11 +32,11 @@ import com.example.yushare.screens.ProfileScreen
 import com.example.yushare.screens.MenuScreen
 // ViewModel Importları
 import com.example.yushare.viewmodel.SharedViewModel
-import com.example.yushare.viewmodel.ChatViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.yushare.screens.ForgotPasswordScreen
 import com.example.yushare.screens.NotificationsScreen
 import com.example.yushare.screens.CreateGroupScreen
+import com.example.yushare.screens.GroupChatScreen
 
 
 @Composable
@@ -57,9 +56,7 @@ fun HomeWithNavBar() {
 
 @Composable
 fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel) {
-    // 1. DÜZELTME: ChatViewModel'i burada oluşturuyoruz.
-    // Böylece sayfalar arası gezerken mesajlar silinmez.
-    val chatViewModel: ChatViewModel = viewModel()
+
 
     val viewModel: com.example.yushare.viewmodel.SharedViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
@@ -105,48 +102,56 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel)
         // --- GROUPS SCREEN GÜNCELLEMESİ ---
         composable("groups") {
             GroupsScreen(
-                onNavigateToCreateGroup = {
-                    // ESKİSİ: println("Create Group butonuna basıldı")
-                    // YENİSİ: Artık yeni ekrana yönlendiriyoruz
-                    navController.navigate("create_group")
+                onNavigateToCreateGroup = { navController.navigate("create_group") },
+                onNavigateToChat = { groupId, groupName ->
+                    navController.navigate("chat/$groupId/$groupName")
                 },
-                onNavigateToChat = { groupName ->
-                    navController.navigate("chat/$groupName")
+                // YENİ EKLENEN PARAMETRELER:
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToNotifications = {
+                    navController.navigate("notifications")
                 }
             )
         }
 
+        // CreateGroupScreen çağrısı:
         composable("create_group") {
             CreateGroupScreen(
-                onNavigateBack = {
-                    // Sol üstteki geri okuna basınca çalışır
-                    navController.popBackStack()
-                },
-                onNavigateToMessaging = {
-                    // "Next" butonuna basınca ne olsun?
-                    // Şimdilik sadece geri dönsün veya sohbet ekranına gitsin diyebiliriz.
-                    // Örnek: "New Group" adında bir sohbete gitsin:
-                    navController.navigate("chat/New Group") {
-                        // Geri tuşuna basınca create ekranına tekrar dönmesin diye:
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToMessaging = { groupId, groupName ->
+                    // Grup oluşunca direkt sohbete atla, geri tuşuyla Groups'a dönsün diye popUp yapıyoruz
+                    navController.navigate("chat/$groupId/$groupName") {
                         popUpTo("groups")
                     }
                 }
             )
         }
 
-        // --- CHAT SCREEN GÜNCELLEMESİ ---
-        composable(
-            "chat/{groupName}",
-            arguments = listOf(navArgument("groupName") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val groupName = backStackEntry.arguments?.getString("groupName") ?: "Group"
+        // ChatScreen çağrısı (Parametreleri alıyor):
+        // AppNavigation.kt içindeki NavGraph fonksiyonunda:
 
-            ChatScreen(
-                navController = navController,
-                groupName = groupName,
-                // 3. DÜZELTME: Yukarıda oluşturduğumuz değişkeni veriyoruz.
-                // Hata veren "ChatViewModel" yazısı yerine "chatViewModel" değişkeni.
-                viewModel = chatViewModel
+        composable(
+            route = "chat/{groupId}/{groupName}",
+            arguments = listOf(
+                navArgument("groupId") { type = NavType.StringType },
+                navArgument("groupName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: ""
+            val groupName = backStackEntry.arguments?.getString("groupName") ?: "Chat"
+
+            GroupChatScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                // YENİ EKLENEN KISIM:
+                onNavigateToNotifications = {
+                    navController.navigate("notifications")
+                },
+                groupId = groupId,
+                groupName = groupName
             )
         }
 
