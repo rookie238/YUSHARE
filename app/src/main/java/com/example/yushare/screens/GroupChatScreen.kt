@@ -26,19 +26,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage // Bu import'un ekli olduğundan emin ol (build.gradle'da coil varsa çalışır)
+import com.example.yushare.R // Projenin R dosyasını import ettiğinden emin ol
 import com.example.yushare.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.material.icons.automirrored.filled.Send
 
 // --- Renkler ---
 private val ChatBg = Color(0xFFF2F0E9)
@@ -58,7 +63,7 @@ data class ChatMessage(
 @Composable
 fun GroupChatScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToNotifications: () -> Unit, // YENİ: Bildirim parametresi
+    onNavigateToNotifications: () -> Unit,
     groupId: String,
     groupName: String
 ) {
@@ -70,13 +75,9 @@ fun GroupChatScreen(
     var messages by remember { mutableStateOf<List<ChatMessage>>(emptyList()) }
     val listState = rememberLazyListState()
 
-    // --- DOSYA SEÇİCİ (Dosya Ekleme Tuşu İçin) ---
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        // Dosya seçildiğinde burası çalışır.
-        // Şimdilik sadece seçilen URI'yi konsola yazdırıyoruz.
-        // İleride buraya Firebase Storage yükleme kodu eklenebilir.
         println("Seçilen Dosya: $uri")
     }
 
@@ -118,7 +119,7 @@ fun GroupChatScreen(
             ChatHeader(
                 groupName = groupName,
                 onBackClick = onNavigateBack,
-                onNotificationClick = onNavigateToNotifications // Parametre bağlandı
+                onNotificationClick = onNavigateToNotifications
             )
         },
         bottomBar = {
@@ -126,7 +127,7 @@ fun GroupChatScreen(
                 text = messageText,
                 onTextChanged = { messageText = it },
                 onSend = { sendMessage() },
-                onAttachClick = { launcher.launch("*/*") } // Tüm dosya türlerini açar
+                onAttachClick = { launcher.launch("*/*") }
             )
         }
     ) { paddingValues ->
@@ -184,7 +185,7 @@ fun ChatHeader(
                     .size(40.dp)
                     .clip(CircleShape)
                     .background(Color.Black.copy(0.05f))
-                    .clickable { onBackClick() }, // Tıklama aktif
+                    .clickable { onBackClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = ChatDarkBlue)
@@ -206,7 +207,7 @@ fun ChatHeader(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .clickable { onNotificationClick() }, // Tıklama aktif
+                    .clickable { onNotificationClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(Icons.Outlined.Notifications, contentDescription = "Notif", tint = ChatDarkBlue)
@@ -243,33 +244,34 @@ fun ChatInputArea(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(100.dp) // Yükseklik
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(ChatInputBg)
-            .padding(horizontal = 24.dp, vertical = 20.dp),
+            .padding(horizontal = 16.dp, vertical = 20.dp), // Kenar boşlukları ayarlandı
         contentAlignment = Alignment.TopCenter
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Artı (+) Butonu
+            // --- 1. SOLDAKİ (+) BUTONU ---
             Box(
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
                     .background(ChatDarkBlue)
-                    .clickable { onAttachClick() }, // Dosya seçici tetiklenir
+                    .clickable { onAttachClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
+            // --- 2. ORTADAKİ YAZI ALANI ---
             Box(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f) // Kalan boşluğu doldur
                     .height(42.dp)
                     .clip(RoundedCornerShape(21.dp))
                     .background(Color.White)
@@ -289,6 +291,30 @@ fun ChatInputArea(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            // --- 3. SAĞDAKİ GÖNDER (SEND) BUTONU ---
+            // Eğer yazı varsa ChatDarkBlue (Mavi), yoksa Gri renk olur.
+            val isButtonEnabled = text.isNotBlank()
+            val buttonColor = if (isButtonEnabled) ChatDarkBlue else Color.Gray
+
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(buttonColor)
+                    .clickable(enabled = isButtonEnabled) { onSend() },
+                contentAlignment = Alignment.Center
+            ) {
+                // Not: Eğer 'Icons.AutoMirrored.Filled.Send' hata verirse 'Icons.Default.Send' kullan.
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp) // İkon boyutu
+                )
+            }
         }
     }
 }
@@ -299,6 +325,7 @@ fun EmptyChatDesign() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        // Arka Plan Halkaları
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
             drawCircle(color = CircleLight, radius = size.width * 0.7f, center = center)
@@ -306,13 +333,45 @@ fun EmptyChatDesign() {
             drawCircle(color = CircleLight.copy(alpha = 0.7f), radius = size.width * 0.3f, center = center)
         }
 
-        AvatarPlaceHolder(Modifier.align(Alignment.TopCenter).offset(y = 80.dp), "A", Color(0xFFEF5350))
-        AvatarPlaceHolder(Modifier.align(Alignment.CenterStart).offset(x = 60.dp, y = (-40).dp), "B", Color(0xFF42A5F5))
-        AvatarPlaceHolder(Modifier.align(Alignment.CenterEnd).offset(x = (-60).dp, y = (-80).dp), "C", Color(0xFF66BB6A))
-        AvatarPlaceHolder(Modifier.align(Alignment.BottomStart).offset(x = 80.dp, y = (-150).dp), "D", Color(0xFFFFA726))
-        AvatarPlaceHolder(Modifier.align(Alignment.BottomEnd).offset(x = (-80).dp, y = (-120).dp), "E", Color(0xFFAB47BC))
+        // --- FOTOĞRAFLI AVATARLAR ---
+        // Not: Bu resimlerin (resim11, resim12 vb.) drawable klasöründe olduğundan emin ol.
 
-        AvatarPlaceHolder(Modifier.align(Alignment.Center), "Me", ChatDarkBlue, size = 60.dp)
+        // A Kişisi (Üst Orta) - resim15 (Asyalı kadın)
+        ImageAvatar(
+            modifier = Modifier.align(Alignment.TopCenter).offset(y = 80.dp),
+            imageRes = R.drawable.resim15
+        )
+
+        // B Kişisi (Sol Orta) - resim11 (Turunculu erkek)
+        ImageAvatar(
+            modifier = Modifier.align(Alignment.CenterStart).offset(x = 60.dp, y = (-40).dp),
+            imageRes = R.drawable.resim11
+        )
+
+        // C Kişisi (Sağ Orta) - resim14 (Kahverengi saçlı kadın)
+        ImageAvatar(
+            modifier = Modifier.align(Alignment.CenterEnd).offset(x = (-60).dp, y = (-80).dp),
+            imageRes = R.drawable.resim14
+        )
+
+        // D Kişisi (Alt Sol) - resim12 (Sarışın kadın)
+        ImageAvatar(
+            modifier = Modifier.align(Alignment.BottomStart).offset(x = 80.dp, y = (-150).dp),
+            imageRes = R.drawable.resim12
+        )
+
+        // E Kişisi (Alt Sağ) - resim13 (Mavili erkek)
+        ImageAvatar(
+            modifier = Modifier.align(Alignment.BottomEnd).offset(x = (-80).dp, y = (-120).dp),
+            imageRes = R.drawable.resim13
+        )
+
+        // Ortadaki "Ben" - Kullanıcının kendi resmi (Örnek olarak resim11'i kullandım, değiştirebilirsin)
+        ImageAvatar(
+            modifier = Modifier.align(Alignment.Center),
+            imageRes = R.drawable.resim11, // Kendi profil resmin buraya gelebilir
+            size = 60.dp
+        )
 
         Text(
             text = "Write your first message",
@@ -326,26 +385,30 @@ fun EmptyChatDesign() {
     }
 }
 
+// Yeni: Fotoğraf Gösteren Avatar Bileşeni
 @Composable
-fun AvatarPlaceHolder(modifier: Modifier, text: String, color: Color, size: androidx.compose.ui.unit.Dp = 50.dp) {
+fun ImageAvatar(
+    modifier: Modifier = Modifier,
+    imageRes: Int, // R.drawable.xxx alacak
+    size: androidx.compose.ui.unit.Dp = 50.dp
+) {
     Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
             .background(Color.White)
-            .border(2.dp, Color.White, CircleShape),
+            .border(2.dp, Color.White, CircleShape)
+            .shadow(4.dp, CircleShape), // Hafif bir gölge eklendi
         contentAlignment = Alignment.Center
     ) {
-        Box(
+        AsyncImage(
+            model = imageRes,
+            contentDescription = "Avatar",
+            contentScale = ContentScale.Crop, // Resmi daireye sığdır
             modifier = Modifier
                 .fillMaxSize()
-                .padding(2.dp)
                 .clip(CircleShape)
-                .background(color),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-        }
+        )
     }
 }
 

@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,15 +16,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Audiotrack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.outlined.CloudUpload
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -60,46 +59,62 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
     var expanded by remember { mutableStateOf(false) }
     var selectedCourseTitle by remember { mutableStateOf("") }
 
-    // --- RENK PALETİ (Görsele Göre) ---
-    val creamBg = Color(0xFFF0EFE9)       // Ana Arka Plan
-    val limeGreen = Color(0xFFD2F066)     // Buton Rengi
-    val darkBlue = Color(0xFF2B0B5E)      // Metin ve İkon Rengi
-    val inputFill = Color(0xFFEBEBEB)     // Input Alanı İçi
-    val blueBorder = Color(0xFF5F6AC4)    // Çerçeveler (Dashed line vb)
-    // ----------------------------------
+    // --- GÖRSELDEKİ RENK PALETİ ---
+    val creamBg = Color(0xFFF2F1EC)       // Görseldeki kirli beyaz/krem arka plan
+    val limeGreen = Color(0xFFD9F270)     // Canlı limon yeşili (Buton ve Geri tuşu)
+    val darkPurple = Color(0xFF2E1A5B)    // Yazılar ve ikonlar için koyu mor/lacivert
+    val inputFill = Color(0xFFEBEBEB)     // Input alanlarının gri arka planı
+    val purpleBorder = Color(0xFF6A71C5)  // Çerçeveler ve ikon çizgileri için morumsu mavi
+    val placeholderColor = Color(0xFFAAAAAA) // Placeholder gri tonu
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .background(creamBg) // Arka plan rengi değişti
-        .padding(20.dp)
+        .background(creamBg)
+        .padding(24.dp)
         .verticalScroll(rememberScrollState())
     ) {
-        // --- HEADER (Geri Butonu) ---
-        Spacer(modifier = Modifier.height(10.dp))
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(limeGreen) // Geri butonu arka planı
-                .clickable { navController.popBackStack() },
-            contentAlignment = Alignment.Center
+        // --- HEADER (Geri Butonu ve Bildirim İkonu) ---
+        Spacer(modifier = Modifier.height(20.dp)) // Üstten biraz boşluk
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween, // İki uca yasla
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Geri Butonu
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(CircleShape)
+                    .background(limeGreen)
+                    .clickable { navController.popBackStack() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Geri",
+                    tint = purpleBorder,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            // Bildirim İkonu (Sağ Üst)
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Geri",
-                tint = blueBorder, // Ok rengi
-                modifier = Modifier.size(24.dp)
+                imageVector = Icons.Outlined.Notifications,
+                contentDescription = "Notifications",
+                tint = purpleBorder,
+                modifier = Modifier.size(32.dp)
             )
         }
-        Spacer(modifier = Modifier.height(30.dp))
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         // --- SELECT COURSE ---
         Text(
             text = "Select Course",
-            color = darkBlue,
+            color = darkPurple,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         ExposedDropdownMenuBox(
@@ -110,19 +125,22 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
                 value = selectedCourseTitle,
                 onValueChange = {},
                 readOnly = true,
-                placeholder = { Text("Courses") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                placeholder = { Text("Courses", color = placeholderColor) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp), // Köşeler yuvarlatıldı
+                shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = blueBorder,
-                    unfocusedBorderColor = blueBorder,
+                    focusedBorderColor = purpleBorder,
+                    unfocusedBorderColor = purpleBorder,
                     focusedContainerColor = inputFill,
                     unfocusedContainerColor = inputFill,
-                    focusedLabelColor = darkBlue,
-                    cursorColor = darkBlue
+                    focusedTextColor = darkPurple,
+                    unfocusedTextColor = darkPurple,
+                    cursorColor = darkPurple
                 )
             )
             ExposedDropdownMenu(
@@ -142,60 +160,63 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // --- DESCRIPTION ---
         Text(
             text = "Description",
-            color = darkBlue,
+            color = darkPurple,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
         OutlinedTextField(
             value = descriptionText,
             onValueChange = { descriptionText = it },
-            placeholder = { Text("Type..") },
+            placeholder = { Text("Type..", color = placeholderColor) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp),
-            shape = RoundedCornerShape(16.dp),
+                .height(140.dp), // Görselde biraz daha yüksek duruyor
+            shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = blueBorder,
-                unfocusedBorderColor = blueBorder,
+                focusedBorderColor = purpleBorder,
+                unfocusedBorderColor = purpleBorder,
                 focusedContainerColor = inputFill,
                 unfocusedContainerColor = inputFill,
-                cursorColor = darkBlue
+                focusedTextColor = darkPurple,
+                unfocusedTextColor = darkPurple,
+                cursorColor = darkPurple
             )
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // --- ATTACHMENT ---
+        // --- ATTACHMENT (Kesikli Çizgili Alan) ---
         Text(
             text = "Attachment (optional)",
-            color = darkBlue,
+            color = darkPurple,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(220.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White) // İçi beyaz
+                .background(Color.White) // İçi tam beyaz
                 .clickable { launcher.launch("*/*") },
             contentAlignment = Alignment.Center
         ) {
-            // Kesikli Çizgi Çerçevesi
+            // Kesikli Çizgi (Border)
             if (selectedUri == null) {
-                DashedBorderBox(color = blueBorder)
+                DashedBorderBox(color = purpleBorder)
             }
 
-            // İçerik
+            // İçerik Gösterimi
             if (selectedUri != null) {
+                // ... Mevcut dosya gösterme mantığı aynı kaldı ...
                 if (mimeType.startsWith("image")) {
                     AsyncImage(
                         model = selectedUri,
@@ -206,68 +227,59 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxSize()
+                        verticalArrangement = Arrangement.Center
                     ) {
                         val icon = when {
                             mimeType.contains("pdf") -> Icons.Default.Description
                             mimeType.startsWith("audio") -> Icons.Default.Audiotrack
                             mimeType.startsWith("video") -> Icons.Default.Image
-                            else -> Icons.Default.CloudUpload
+                            else -> Icons.Outlined.CloudUpload
                         }
-                        Icon(icon, null, tint = darkBlue, modifier = Modifier.size(64.dp))
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            text = "Attached File",
-                            fontWeight = FontWeight.Bold,
-                            color = darkBlue,
-                            fontSize = 18.sp
-                        )
-                        Text(mimeType, fontSize = 12.sp, color = Color.Gray)
+                        Icon(icon, null, tint = darkPurple, modifier = Modifier.size(64.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Attached File", fontWeight = FontWeight.Bold, color = darkPurple)
                     }
                 }
                 // Silme butonu
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(10.dp)
-                        .size(32.dp)
+                        .padding(12.dp)
+                        .size(36.dp)
                         .clip(CircleShape)
                         .background(Color.White)
                         .clickable { selectedUri = null; mimeType = "" },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "Remove",
-                        tint = Color.Red,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    Icon(Icons.Default.Close, null, tint = Color.Red)
                 }
             } else {
-                // Boş Durum (Yükleme yapılmamış)
+                // Boş Durum (Yükleme yokken) - Görseldeki tasarım
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        Icons.Default.CloudUpload, // Görseldeki bulut ikonuna benzer
-                        null,
-                        tint = blueBorder,
-                        modifier = Modifier.size(50.dp)
+                        imageVector = Icons.Outlined.CloudUpload,
+                        contentDescription = null,
+                        tint = purpleBorder,
+                        modifier = Modifier.size(56.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "Click to Upload File",
-                        color = darkBlue,
-                        fontWeight = FontWeight.Bold
+                        color = darkPurple,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Image, PDF, MP4 or Text",
-                        fontSize = 12.sp,
+                        fontSize = 13.sp,
                         color = Color.Gray
                     )
                 }
             }
         }
 
+        Spacer(modifier = Modifier.weight(1f)) // Butonu en alta itmek için
         Spacer(modifier = Modifier.height(30.dp))
 
         // --- SHARE BUTTON ---
@@ -283,29 +295,28 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp), // Biraz daha yüksek
+                .height(56.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = limeGreen, // Limon yeşili
-                contentColor = darkBlue // Yazı rengi koyu
+                containerColor = limeGreen,
+                contentColor = darkPurple
             ),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(12.dp),
             enabled = !isUploading
         ) {
             if (isUploading) {
-                CircularProgressIndicator(color = darkBlue)
+                CircularProgressIndicator(color = darkPurple, modifier = Modifier.size(24.dp))
             } else {
                 Text(
                     text = "SHARE",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
-        Spacer(modifier = Modifier.height(50.dp))
     }
 }
 
-// Görseldeki gibi mavi kesikli çizgi için rengi parametre olarak alıyoruz
+// Görseldeki kesikli çizgi için (Tasarım aynı kaldı, renk parametresi güncellendi)
 @Composable
 fun DashedBorderBox(color: Color) {
     val stroke = Stroke(
