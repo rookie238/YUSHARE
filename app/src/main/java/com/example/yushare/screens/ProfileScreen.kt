@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -35,24 +36,45 @@ val poppinsFontFamily = FontFamily(
     Font(R.font.poppins_extrabold, FontWeight.ExtraBold)
 )
 
-val ProfileBgColor = Color(0xFFEFEDE6)
+val ProfileBgColor = Color(0xFFEFEDE6) // Krem Rengi
 val ProfileOrange = Color(0xFFFE9000)
 val ProfileBlue = Color(0xFF294BA3)
 
+// 1. ANA EKRAN (ViewModel burada bağlanır)
 @Composable
 fun ProfileScreen(
     viewModel: SharedViewModel,
     navController: NavController
 ) {
-    // 1. Veritabanından gelen kullanıcı verisini alıyoruz
     val userProfile = viewModel.currentUserProfile.value
 
-    // 2. Sayfa açıldığında veriyi tazelemek için fetch fonksiyonunu çağırıyoruz
     LaunchedEffect(Unit) {
         viewModel.fetchUserProfile()
     }
 
-    // Ana Kaydırılabilir Kolon
+    // UI kısmını verilerle çağırıyoruz
+    ProfileScreenContent(
+        name = userProfile.name,
+        department = userProfile.department,
+        studentId = userProfile.studentId,
+        degree = userProfile.degree,
+        bio = userProfile.bio,
+        onBackClick = { navController.popBackStack() },
+        onMenuClick = { navController.navigate("menu") }
+    )
+}
+
+// 2. SADECE GÖRÜNÜM (Tasarım burası - Preview için ayrıldı)
+@Composable
+fun ProfileScreenContent(
+    name: String,
+    department: String,
+    studentId: String,
+    degree: String,
+    bio: String,
+    onBackClick: () -> Unit,
+    onMenuClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,13 +83,13 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // HEADER
+
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.TopCenter
         ) {
 
-            // 1. Turuncu Arka Plan (Header)
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -75,25 +97,19 @@ fun ProfileScreen(
                     .clip(RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp))
                     .background(ProfileOrange)
             ) {
-
-                // Üst Menü İkonları
+                // ÜST MENÜ (Geri ve Menü butonları)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 27.dp, start = 20.dp, end = 20.dp),
+                        .padding(top = 40.dp, start = 20.dp, end = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
-                    // Geri Butonu
                     IconButton(
-                        onClick = { navController.popBackStack() },
+                        onClick = onBackClick,
                         modifier = Modifier
-                            .size(56.dp)
-                            .background(
-                                color = Color(0xFFD9D9D9),
-                                shape = CircleShape
-                            )
+                            .size(50.dp)
+                            .background(Color(0xFFD9D9D9), CircleShape)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back_arrow),
@@ -105,20 +121,16 @@ fun ProfileScreen(
                     Text(
                         text = "MY PROFILE",
                         color = ProfileBlue,
-                        fontSize = 21.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = poppinsFontFamily
                     )
 
-                    // Menü Butonu (DÜZELTİLDİ: Doğrudan 'menu' sayfasına yönlendiriyor)
                     IconButton(
-                        onClick = { navController.navigate("menu") },
+                        onClick = onMenuClick,
                         modifier = Modifier
-                            .size(56.dp)
-                            .background(
-                                color = Color(0xFFD9D9D9),
-                                shape = CircleShape
-                            )
+                            .size(50.dp)
+                            .background(Color(0xFFD9D9D9), CircleShape)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_menu_burger),
@@ -129,21 +141,21 @@ fun ProfileScreen(
                 }
             }
 
-            // Avatar
+            // 2. AVATAR VE İSİM (ÖNEMLİ DEĞİŞİKLİK BURADA)
+            // İsim artık bu Column'un içinde, yani turuncu alanın üstünde duracak.
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Üstten boşluk (Avatarı aşağı itmek için)
+                Spacer(modifier = Modifier.height(110.dp))
 
-                Spacer(modifier = Modifier.height(95.dp))
-
-                // Avatar
-                Spacer(modifier = Modifier.height(1.dp))
+                // AVATAR
                 Box(
                     modifier = Modifier
-                        .size(283.dp)
+                        .size(270.dp)
                         .clip(CircleShape)
                         .background(Color.Gray)
                 ) {
@@ -154,52 +166,39 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
-            }
-        } // Header Box Sonu
 
-        // --- KULLANICI İSMİ ---
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = userProfile.name,
-            color = ProfileBlue,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = poppinsFontFamily,
-            textAlign = TextAlign.Center
-        )
+                Spacer(modifier = Modifier.height(16.dp))
+
+
+                Text(
+                    text = name,
+                    color = ProfileBlue,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // --- BİLGİ KARTI ---
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .background(
-                    color = Color(0xFFD9D9D9),
-                    shape = RoundedCornerShape(50.dp)
-                )
-                .padding(vertical = 50.dp, horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .background(Color(0xFFE6E8EB), RoundedCornerShape(40.dp)) // Rengi biraz daha açtım (Figma gibi)
+                .padding(vertical = 40.dp, horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // DİNAMİK BÖLÜM
-            ProfileInfoRow(
-                label = "Department:",
-                value = userProfile.department
-            )
+            ProfileInfoRow(label = "Department:", value = department)
+            ProfileInfoRow(label = "Student Id:", value = studentId)
 
-            // DİNAMİK ÖĞRENCİ NO
-            ProfileInfoRow(
-                label = "Student Id:",
-                value = userProfile.studentId
-            )
-
-            // DİNAMİK DERECE (Varsa göster)
-            if (userProfile.degree.isNotEmpty()) {
-                ProfileInfoRow(label = "Degree:", value = userProfile.degree)
+            if (degree.isNotEmpty()) {
+                ProfileInfoRow(label = "Degree:", value = degree)
             }
 
-            // --- BİO ---
+            // BİO
             Column {
                 Text(
                     text = "Bio:",
@@ -211,22 +210,19 @@ fun ProfileScreen(
                     )
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
-                    text = userProfile.bio.ifEmpty { "Henüz bir biyografi eklenmemiş." },
+                    text = bio.ifEmpty { "Henüz bir biyografi eklenmemiş." },
                     color = ProfileBlue,
                     fontSize = 14.sp,
                     fontFamily = poppinsFontFamily,
-                    lineHeight = 20.sp
+                    lineHeight = 22.sp
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(100.dp)) // Sayfanın altındaki boşluk
+        Spacer(modifier = Modifier.height(100.dp))
     }
 }
-
-// --- YARDIMCI COMPONENTLER ---
 
 @Composable
 fun ProfileInfoRow(label: String, value: String) {
@@ -240,5 +236,19 @@ fun ProfileInfoRow(label: String, value: String) {
         color = ProfileBlue,
         fontSize = 15.sp,
         fontFamily = poppinsFontFamily
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreenContent(
+        name = "Hasan Uz",
+        department = "Information System and Technologies",
+        studentId = "20201308020",
+        degree = "Student",
+        bio = "Designing the world, one pixel at a time. Visual Communication Design Student.",
+        onBackClick = {},
+        onMenuClick = {}
     )
 }
