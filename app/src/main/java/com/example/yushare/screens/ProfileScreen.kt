@@ -238,17 +238,3 @@ fun ProfileInfoRow(label: String, value: String) {
         fontFamily = poppinsFontFamily
     )
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreenContent(
-        name = "Hasan Uz",
-        department = "Information System and Technologies",
-        studentId = "20201308020",
-        degree = "Student",
-        bio = "Designing the world, one pixel at a time. Visual Communication Design Student.",
-        onBackClick = {},
-        onMenuClick = {}
-    )
-}

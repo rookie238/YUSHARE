@@ -33,7 +33,7 @@ import com.example.yushare.viewmodel.SharedViewModel
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 
-// Renk Tanımları
+
 val MenuBlue = Color(0xFF294BA3)
 val PopupBackground = Color(0xFF5A5A5A)
 val SwitchGreen = Color(0xFF4CAF50)
@@ -140,7 +140,7 @@ fun MenuScreen(
                             contentDescription = "Profile Picture",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .size(280.dp)
+                                .size(200.dp)
                                 .clip(RoundedCornerShape(283.dp))
                         )
 
@@ -165,7 +165,7 @@ fun MenuScreen(
                                 fontFamily = poppinsFontFamily,
                                 color = MenuBlue.copy(alpha = 0.7f)
                             )
-                        } // İsim Column Kapanışı
+                        }
 
                         Spacer(modifier = Modifier.height(1.dp))
 
@@ -328,7 +328,7 @@ fun EditProfilePopup(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(70.dp)
                         .clip(CircleShape)
                 )
 
@@ -660,7 +660,7 @@ fun ChangePasswordPopup(onDismiss: () -> Unit) {
     }
 }
 
-// YARDIMCI BİLEŞENLER
+
 
 @Composable
 fun SectionHeader(text: String) {
@@ -695,7 +695,6 @@ fun NotificationSwitchRow(
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium
         )
-        // Switch'i küçültmek için scale kullanıyoruz
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
