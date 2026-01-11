@@ -18,3 +18,9 @@
 - **UI Framework:** Jetpack Compose
 - **Backend:** Firebase (Firestore & Auth)
 - **Version Control:** Git & GitHub (Branching, Pull Requests, Issues)
+
+Furkan Özsakarya 20211308011
+-Developed CoursesScreen and CourseDetailScreen.
+-Improved the application UI and refined layout components.
+-Worked on the initial implementation of the UploadScreen.
+-Ensured code modularity and maintainability following clean architecture principles.
