@@ -176,7 +176,7 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
             placeholder = { Text("Type..", color = placeholderColor) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp), // Görselde biraz daha yüksek duruyor
+                .height(140.dp),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = purpleBorder,
