@@ -87,4 +87,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.6.8")
 
     implementation("com.cloudinary:cloudinary-android:2.5.0")
+
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

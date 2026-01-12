@@ -13,11 +13,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.yushare.navigation.HomeWithNavBar
 import com.example.yushare.screens.ForgotPasswordScreen
 import com.example.yushare.screens.LoginScreen
+import com.example.yushare.screens.OnboardingScreen // <-- BU IMPORT'U EKLEMELİSİN
 import com.example.yushare.screens.RegisterScreen
 import com.example.yushare.ui.theme.YUSHARETheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -26,10 +29,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Ana navigasyon kontrolcüsü (Login -> Home arası geçiş için)
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = "login") {
+                    // DEĞİŞİKLİK 1: startDestination "onboarding" yapıldı
+                    NavHost(navController = navController, startDestination = "onboarding") {
+
+                        // DEĞİŞİKLİK 2: Onboarding rotası eklendi
+                        composable("onboarding") {
+                            OnboardingScreen(navController = navController)
+                        }
 
                         // 1. LOGIN
                         composable("login") {
@@ -37,6 +45,7 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 onLoginSuccess = {
                                     navController.navigate("home") {
+                                        // Geri tuşuna basınca login'e dönmesin diye stack temizleniyor
                                         popUpTo("login") { inclusive = true }
                                     }
                                 }
@@ -54,9 +63,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         // 4. HOME
-                        // Burası açıldığında "HomeWithNavBar" devreye girer.
-                        // Post detayları ve diğer alt sayfalar "AppNavigation" (HomeWithNavBar'ın içi) tarafından yönetilir.
-                        // O yüzden buraya ekstradan PostDetailScreen yazmana gerek yoktur.
                         composable("home") {
                             HomeWithNavBar()
                         }

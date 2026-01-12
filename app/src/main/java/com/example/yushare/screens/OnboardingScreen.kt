@@ -58,7 +58,7 @@ fun OnboardingScreen(navController: NavController) {
                         Button(
                             onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
                             modifier = Modifier
-                                .align(Alignment.BottomStart)
+                                .align(Alignment.BottomEnd)
                                 .height(50.dp)
                                 .width(150.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),
@@ -75,7 +75,7 @@ fun OnboardingScreen(navController: NavController) {
                                 }
                             },
                             modifier = Modifier
-                                .align(Alignment.BottomEnd)
+                                .align(Alignment.BottomCenter)
                                 .height(50.dp)
                                 .width(120.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)),

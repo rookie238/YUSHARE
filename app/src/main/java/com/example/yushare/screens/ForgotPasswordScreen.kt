@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.example.yushare.R
 
 @Composable
 fun ForgotPasswordScreen(
@@ -57,7 +59,7 @@ fun ForgotPasswordScreen(
         ) {
             // Kilit İkonu
             Icon(
-                imageVector = Icons.Outlined.Lock, // İçi boş kilit ikonu (varsa)
+                painter = painterResource(id = R.drawable.forgetpasswordicon),
                 contentDescription = "Forgot Password Icon",
                 modifier = Modifier.size(80.dp),
                 tint = Color.Black

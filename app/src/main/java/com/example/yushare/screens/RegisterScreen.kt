@@ -270,7 +270,7 @@ fun RegisterScreen(
                                                     "createdAt" to System.currentTimeMillis()
                                                 )
 
-                                                db.collection("users").document(uid).set(userMap)
+                                                db.collection("Users").document(uid).set(userMap)
                                                     .addOnSuccessListener {
                                                         isLoading = false
                                                         Toast.makeText(context, "Registration Successful!", Toast.LENGTH_SHORT).show()
@@ -291,7 +291,7 @@ fun RegisterScreen(
                                 }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        modifier = Modifier.height(50.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = DarkBlueColor),
                         shape = RoundedCornerShape(25.dp),
                         enabled = !isLoading
