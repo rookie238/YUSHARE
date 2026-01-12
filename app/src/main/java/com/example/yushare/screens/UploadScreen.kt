@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -131,7 +132,8 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
                 },
                 modifier = Modifier
                     .menuAnchor()
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .border(3.dp, purpleBorder, RoundedCornerShape(12.dp)),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = purpleBorder,
@@ -176,7 +178,8 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
             placeholder = { Text("Type..", color = placeholderColor) },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp),
+                .height(140.dp)
+                .border(3.dp, purpleBorder, RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = purpleBorder,
@@ -320,7 +323,7 @@ fun UploadScreen(viewModel: SharedViewModel, navController: NavHostController) {
 @Composable
 fun DashedBorderBox(color: Color) {
     val stroke = Stroke(
-        width = 4f,
+        width = 8f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
     )
     Canvas(modifier = Modifier.fillMaxSize()) {
